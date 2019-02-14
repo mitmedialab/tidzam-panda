@@ -23,13 +23,11 @@ class Selector {
 
     this.joint          = this.joint_hover;
     this.joint.selected = true;
-    console.log('TAKE', this.joint);
   }
 
   release_joint() {
     if(this.joint == null) return;
 
-    console.log('RELEASE', this.joint);
     this.joint.selected = false;
     this.joint          = null;
   }

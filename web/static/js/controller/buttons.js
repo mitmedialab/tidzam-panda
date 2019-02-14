@@ -22,8 +22,6 @@ function onResetButton() {
     let button = document.getElementById(key);
     resetJointButton(button);
   }
-
-  console.log('RESET SKELETON:', _SELECTOR.skeleton.id, '|', _SELECTOR.skeleton.joints);
 }
 
 
@@ -54,8 +52,6 @@ function onJointButton(button, id) {
 
   button.className = 'button-joint-selected';
   button.setAttribute("onclick", "javascript: onJointRemove(this, this.id)");
-
-  console.log('JOINT BUTTON:', button, '|', id);
 }
 
 
@@ -110,7 +106,6 @@ function onPandaButton(id) {
 
   setJointButtons(skeleton);
   showPandaSelected();
-  console.log('PANDA BUTTON:', id, '|', skeleton.id);
 }
 
 function setPandaButtons() {
@@ -180,7 +175,6 @@ function onSubmitButton() {
 }
 
 function onStopButton(button) {
-  console.log('STOP', CURRENT_FRAME, '/', TOTAL_FRAMES);
   button.id        = 'PLAY';
   button.innerHTML = 'PLAY';
   button.setAttribute("onclick", "javascript: onPlayButton(this)");
@@ -198,7 +192,6 @@ function onStopButton(button) {
 }
 
 function onPlayButton(button) {
-  console.log('PLAY', CURRENT_FRAME, '/', TOTAL_FRAMES);
   button.id        = 'STOP';
   button.innerHTML = 'STOP';
   button.setAttribute("onclick", "javascript: onStopButton(this)");
@@ -216,8 +209,6 @@ function onPlayButton(button) {
 }
 
 function onNextButton() {
-  console.log('NEXT', CURRENT_FRAME, '/', TOTAL_FRAMES);
-
   if(CURRENT_FRAME + 1 >= TOTAL_FRAMES) {
     if(PLAY_BUTTON.id == 'STOP') onStopButton(PLAY_BUTTON);
     return;
@@ -231,8 +222,6 @@ function onNextButton() {
 }
 
 function onPrevButton() {
-  console.log('PREV', CURRENT_FRAME, '/', TOTAL_FRAMES);
-
   if(CURRENT_FRAME - 1 < 0) return;
   CURRENT_FRAME--;
 
@@ -242,8 +231,6 @@ function onPrevButton() {
 }
 
 function onFirstButton() {
-  console.log('FIRST', CURRENT_FRAME, '/', TOTAL_FRAMES);
-
   CURRENT_FRAME        = 0;
   _SELECTOR.frame_data = _FRAMES_DATA[CURRENT_FRAME];
 
@@ -268,4 +255,10 @@ function partialReset() {
 
   _SELECTOR.joint    = null;
   _SELECTOR.skeleton = null;
+}
+
+
+function onFlipButton(mode) {
+  if(mode == 'v') _SELECTOR.skeleton.flip_v();
+  else if(mode == 'h') _SELECTOR.skeleton.flip_h();
 }

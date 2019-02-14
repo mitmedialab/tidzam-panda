@@ -84,6 +84,18 @@ body {
   grid-template-columns: repeat(4, 1fr);
 }
 
+#card #card-tools {
+  position: relative;
+  width: 100%;
+
+  margin: auto;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  border-bottom: solid var(--light-grey) 1px;
+}
+
 #card #card-submit {
   position: relative;
   display: block;

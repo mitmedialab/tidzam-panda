@@ -7,6 +7,47 @@ class Skeleton {
     this.reset();
   }
 
+  center_point() {
+    let pos = new Vector2D();
+    let n   = 0;
+
+    for(let key of Object.keys(SKELETON)) {
+      let joint = this.joints[key];
+      if(joint == null) continue;
+
+      pos.x += joint.pos.x;
+      pos.y += joint.pos.y;
+      n++;
+    }
+
+    if(n == 0) return pos;
+    return new Vector2D(pos.x / n, pos.y / n);
+  }
+
+  flip_v() {
+    let center = this.center_point();
+
+    for(let key of Object.keys(SKELETON)) {
+      let joint = this.joints[key];
+      if(joint == null) continue;
+
+      let d       = center.x - joint.pos.x;
+      joint.pos.x = center.x + d;
+    }
+  }
+
+  flip_h() {
+    let center = this.center_point();
+
+    for(let key of Object.keys(SKELETON)) {
+      let joint = this.joints[key];
+      if(joint == null) continue;
+
+      let d       = center.y - joint.pos.y;
+      joint.pos.y = center.y + d;
+    }
+  }
+
   reset() {
     this.joints   = {};
     for(let key of Object.keys(SKELETON)) this.joints[key] = null;
@@ -16,14 +57,12 @@ class Skeleton {
     let _pos = SKELETON_DEFAULT_POS[SKELETON[joint_type]];
     let pos  = new Vector2D(_pos[0], _pos[1]);
     let col  = JOINT_COLORS[SKELETON[joint_type]];
-    console.log('ADD JOINT:', joint_type, '|', pos.x, pos.y, '|', col);
 
     this.joints[joint_type] = new Joint(pos, col, joint_type);
     return this.joints[joint_type];
   }
 
   remove_joint(joint_type) {
-    console.log('REMOVE JOINT');
     let joint = this.joints[joint_type];
     if(joint == null) return;
 
@@ -119,6 +158,12 @@ class Skeleton {
   }
 
   draw() {
+    let center = this.center_point();
+    strokeWeight(JOINT_STROKE_WEIGHT);
+    stroke(color(255, 255, 255, 125));
+    noFill();
+    ellipse(center.x, center.y, JOINT_RADIUS * 2);
+
     for (let joint_type of Object.keys(this.joints)) {
       let joint = this.joints[joint_type];
       if(joint == null) continue;
@@ -138,5 +183,6 @@ class Skeleton {
     }
 
     this.draw_mid_lines();
+
   }
 }
