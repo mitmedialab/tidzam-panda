@@ -166,12 +166,20 @@ function formatSkeletons() {
     skeletons.push(skeleton);
   }
 
-  return JSON.stringify(skeletons, null, 4);
+  return { skeletons: skeletons };
 }
 
-function onSubmitButton() {
+function submitSkeletonForFrame() {
   let skeletons = formatSkeletons();
-  alert(skeletons);
+
+  $.ajax({
+    type: 'POST',
+    url: '/video/' + VIDEO_URL + '/' + CURRENT_FRAME,
+    data: skeletons,
+    success: function(data) { alert('Data sent'); },
+    contentType: 'application/json',
+    dataType: 'json'
+  });
 }
 
 function onStopButton(button) {
@@ -208,7 +216,7 @@ function onPlayButton(button) {
   document.getElementById('ADD').className = 'button-border-disabled';
 }
 
-function onNextButton() {
+function onNextButton(submit=false) {
   if(CURRENT_FRAME + 1 >= TOTAL_FRAMES) {
     if(PLAY_BUTTON.id == 'STOP') onStopButton(PLAY_BUTTON);
     return;
@@ -218,6 +226,7 @@ function onNextButton() {
   if(CURRENT_FRAME > _FRAMES_DATA.length - 1) getFrame(CURRENT_FRAME);
   _SELECTOR.frame_data = _FRAMES_DATA[CURRENT_FRAME];
 
+  if(submit) SkeletonForFrame();
   partialReset();
 }
 
