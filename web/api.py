@@ -33,21 +33,29 @@ def img_to_b64(img):
     new_image_string = base64.b64encode(buff.getvalue()).decode("utf-8")
     return 'data:image/jpg;base64,' + str(new_image_string)
 
-def extract_frame(video_path, idx):
-    video_cap   = cv2.VideoCapture(video_path)
+def prepare_frame(video_id, frame_id):
+    video = mongo.db.videos.find_one({"_id" : ObjectId(video_id)})
+    del video["_id"]
+
+    video_cap   = cv2.VideoCapture(args.data_dir + '/videos/'+video["path"])
     frame_count = int(video_cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    video_cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+    video_cap.set(cv2.CAP_PROP_POS_FRAMES, frame_id)
     _, img = video_cap.read()
 
     video_cap.release()
 
-    return json.dumps({
+    return {
+        **{
         'img'   : img_to_b64(img),
         'width' : img.shape[1],
         'height': img.shape[0],
         'size'  : frame_count
-    })
+        }, **video}
+
+def load_skeleton(frame):
+
+    return frame
 
 @app.route('/')
 def index():
@@ -56,20 +64,25 @@ def index():
 
 ###
 
-@app.route('/video/<string:video_id>/<int:idx>', methods=['GET'])
-def get_frame(video_id, idx):
-    try:
-        video = mongo.db.videos.find_one({"_id" : ObjectId(video_id)})
-        return jsonify(extract_frame(args.data_dir + '/videos/'+video["path"], idx))
-    except:
-        abort(404)
+@app.route('/video/<string:video_id>/<int:frame_id>', methods=['GET'])
+def get_frame(video_id, frame_id):
+    #try:
+    frame = prepare_frame(video_id, frame_id)
+    frame = load_skeleton(frame)
 
-@app.route('/video/<string:video_id>/<int:idx>', methods=['POST'])
-def post_frame_canvas(video_id, idx):
+    return jsonify(json.dumps(frame))
+    #except:
+
+    #    abort(404)
+
+@app.route('/video/<string:video_id>/<int:frame_id>', methods=['POST'])
+def post_frame_canvas(video_id, frame_id):
     print("POST received")
     print(request.json)
+    mongo.db.frameCanvas.delete_one({"video_id" : video_id, "frame_id": frame_id})
     request.json.video_id = video_id
-    request.json.frame_id  = idx
+    request.json.frame_id = frame_id
     mongo.db.frameCanvas.insert(request.json)
+
 if __name__ == '__main__':
     app.run()
