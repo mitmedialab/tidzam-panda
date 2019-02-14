@@ -11,6 +11,7 @@ from PIL import Image
 
 from flask import Flask, render_template, jsonify
 from flask_pymongo import PyMongo
+from flask import request
 from flask import abort
 
 parser = argparse.ArgumentParser(description='PyTorch rtpose Training')
@@ -66,23 +67,26 @@ def index():
 
 @app.route('/video/<string:video_id>/<int:frame_id>', methods=['GET'])
 def get_frame(video_id, frame_id):
-    #try:
     frame = prepare_frame(video_id, frame_id)
     frame = load_skeleton(frame)
 
     return jsonify(json.dumps(frame))
-    #except:
-
-    #    abort(404)
 
 @app.route('/video/<string:video_id>/<int:frame_id>', methods=['POST'])
 def post_frame_canvas(video_id, frame_id):
     print("POST received")
-    print(request.json)
+
     mongo.db.frameCanvas.delete_one({"video_id" : video_id, "frame_id": frame_id})
-    request.json.video_id = video_id
-    request.json.frame_id = frame_id
-    mongo.db.frameCanvas.insert(request.json)
+
+    f             = json.loads(str(request.data, 'utf-8'))
+    f['video_id'] = video_id
+    f['frame_id'] = frame_id
+
+    print(f)
+
+    id = mongo.db.frameCanvas.insert(f)
+    return jsonify({})
+
 
 if __name__ == '__main__':
     app.run()

@@ -157,7 +157,7 @@ function formatSkeletons() {
   for(let _skeleton of _skeletons) {
     let skeleton = {};
 
-    for(let _joint_type of Object.keys(_skeleton.joints)) {
+    for(let _joint_type of Object.keys(SKELETON)) {
       let _joint = _skeleton.joints[_joint_type];
 
       skeleton[_joint_type] = (_joint == null)? null: [_joint.pos.x, _joint.pos.y];
@@ -174,9 +174,8 @@ function submitSkeletonForFrame() {
 
   $.ajax({
     type: 'POST',
-    url: '/video/' + VIDEO_URL + '/' + CURRENT_FRAME,
-    data: skeletons,
-    success: function(data) { alert('Data sent'); },
+    url: 'video/' + VIDEO_URL + '/' + CURRENT_FRAME,
+    data: JSON.stringify(skeletons),
     contentType: 'application/json',
     dataType: 'json'
   });
@@ -221,12 +220,13 @@ function onNextButton(submit=false) {
     if(PLAY_BUTTON.id == 'STOP') onStopButton(PLAY_BUTTON);
     return;
   }
+  if(submit) submitSkeletonForFrame();
+
   CURRENT_FRAME++;
 
   if(CURRENT_FRAME > _FRAMES_DATA.length - 1) getFrame(CURRENT_FRAME);
   _SELECTOR.frame_data = _FRAMES_DATA[CURRENT_FRAME];
 
-  if(submit) SkeletonForFrame();
   partialReset();
 }
 
