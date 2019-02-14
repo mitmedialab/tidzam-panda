@@ -10,7 +10,7 @@ let TOTAL_FRAMES  = 1;
 let PLAY_BUTTON = null;
 
 function getFrame(id) {
-  let url = 'http://127.0.0.1:5000/video/' + VIDEO_URL + '/' + id;
+  let url = 'video/' + VIDEO_URL + '/' + id;
 
   $.ajaxSetup({async: false});
   $.get(url, function(data) {
