@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>PECS</title>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/p5.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.dom.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.sound.js"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/controller/selector.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/controller/buttons.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/model/joint.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/model/frame_data.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/model/skeleton.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/model/values.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/model/vector2d.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/model/uniqueid.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/view/sketch.js') }}"></script>
+    <link   rel="stylesheet"      href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <script>
+      let VIDEO_URL  = '{{ url|safe }}';
+    </script>
+
+    <div id="card">
+      <div id="card-canvas"></div>
+      <div id='card-joints'><button id="RESET" class="button-joint-disabled">RESET</button></div>
+      <div id="card-pandas"><button id="ADD" class="button-border" onclick="onAddPandaButton()"><span>+</span> ADD</button></div>
+      <div id="canvas-tools">
+        <button id="FLIP_V" class="button-control" onclick="onFlipButton('v')">FLIP_V</button>
+        <button id="FLIP_H" class="button-control" onclick="onFlipButton('h')">FLIP_H</button>
+      </div>
+      <div id='card-controls'>
+        <button id="FIRST" class="button-control" onclick="onFirstButton()">FIRST</button>
+        <button id="PREV"  class="button-control" onclick="onPrevButton()">PREV</button>
+        <button id="PLAY"  class="button-control" onclick="onPlayButton(this)">PLAY</button>
+        <button id="NEXT"  class="button-control" onclick="onNextButton()">NEXT</button>
+      </div>
+      <div id="card-submit"><button class="button-accent" onclick="onSubmitButton()">SUBMIT</button></div>
+    </div>
+
+  </body>
+</html>

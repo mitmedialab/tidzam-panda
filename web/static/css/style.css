@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+:root {
+  --dark-grey: #161616;
+  --light-grey: #ececec;
+
+  --primary-dark: #618833;
+  --primary: #cddc39;
+  --primary-light: #cddc3922;
+
+  --accent-dark: #b26a00;
+  --accent: #ff9100;
+  --accent-light: #ff910022;
+
+  --warning: #ff1744;
+
+  --blue-dark: #1769aa;
+  --blue: #2196f3;
+  --blue-light: #2196f322;
+}
+
+body {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+
+  padding: 0px;
+  margin: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  font-family: 'Open Sans',sans-serif;
+
+  background: var(--light-grey);
+}
+
+#card {
+  position: relative;
+  display: block;
+
+  margin: auto;
+  padding: 0px;
+
+  width: 800px;
+  height: auto;
+  border-radius: 10px;
+
+  background: white;
+}
+
+#card #card-canvas, #card #card-canvas .canvas {
+  position: relative;
+  display: block;
+
+  width: 100%;
+  height: auto;
+  border-radius: 10px 10px 0px 0px;
+}
+
+#card #card-pandas, #card #card-joints {
+  position: relative;
+  width: 90%;
+
+  margin: auto;
+  padding: 15px 0px;
+
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: 10px;
+
+  border-bottom: solid var(--light-grey) 1px;
+}
+
+#card #card-controls {
+  position: relative;
+  width: 100%;
+
+  margin: auto;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+#card #card-submit {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+button {
+  position: relative;
+
+  border-radius: 5px;
+  border: none;
+  padding: 10px;
+
+  width: 100%;
+
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--dark-grey);
+
+  cursor: pointer;
+}
+
+.button-border {
+  background: none;
+  border: solid var(--primary) 2px;
+  transition: 0.2s;
+}
+.button-border:hover {
+  background: var(--primary-light);
+}
+
+.button-border-disabled {
+  background: none;
+  border: solid var(--primary-light) 2px;
+  transition: 0.2s;
+  color: var(--light-grey);
+}
+
+.button-plain {
+  background: none;
+  transition: 0.2s;
+  background: var(--primary);
+  border: solid var(--primary) 2px;
+  color: white;
+}
+.button-plain:hover {
+  background: var(--primary-dark);
+  border: solid var(--primary-dark) 2px;
+}
+
+.button-accent {
+  padding: 15px 10px;
+  border-radius: 0px 0px 10px 10px;
+
+  background: none;
+  transition: 0.2s;
+  background: var(--accent);
+  border: solid var(--accent) 2px;
+
+  color: white;
+}
+.button-accent:hover {
+  background: none;
+  background: var(--accent-dark);
+  border: solid var(--accent-dark) 2px;
+}
+
+.button-del {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+
+  padding: 10px;
+  margin: 0px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+
+  font-size: 20px;
+  line-height: 0px;
+
+  color: white;
+  background-color: var(--dark-grey);
+  transition: 0.2s;
+}
+.button-del:hover {
+  background-color: var(--warning);
+}
+
+.button-holder {
+  position: relative;
+}
+
+.button-joint {
+  background: none;
+  border: solid var(--blue) 2px;
+  transition: 0.2s;
+}
+.button-joint:hover {
+  background: var(--blue-light);
+}
+.button-joint-disabled {
+  opacity: 0.2;
+  background: none;
+  border: solid var(--blue) 2px;
+  cursor: default;
+}
+.button-joint-enabled {
+  background: var(--blue);
+  border: solid var(--blue) 2px;
+  color: white;
+  transition: 0.2s;
+}
+.button-joint-enabled:hover {
+  background: none;
+  border: solid var(--blue-dark) 2px;
+  background: var(--blue-dark);
+}
+.button-joint-selected {
+  background: none;
+  border: solid var(--accent) 2px;
+  transition: 0.2s;
+}
+.button-joint-selected:hover {
+  background: var(--accent-light);
+}
+
+.panda-selected {
+  box-shadow: 5px 5px 8px #888;
+}
+.panda-selected:hover {
+  box-shadow: 5px 5px 8px #888;
+}
+
+.button-control {
+  background: none;
+  transition: 0.2s;
+  border-radius: 0px;
+}
+.button-control:hover {
+  background: var(--accent-light);
+}
+
+.button-control-disabled {
+  background: none;
+  border-radius: 0px;
+  cursor: default;
+  color: var(--light-grey);
+  transition: 0.2s;
+}
