@@ -4,6 +4,7 @@ import random
 import base64
 import cv2
 import json
+import glob
 from bson.objectid import ObjectId
 
 from io import BytesIO
@@ -15,14 +16,36 @@ from flask import request
 from flask import abort
 
 parser = argparse.ArgumentParser(description='PyTorch rtpose Training')
+
 parser.add_argument('--data_dir', default='data/', type=str, metavar='DIR',
+                    help='path to where coco images stored')
+
+parser.add_argument('--mongo_url', default='localhost:27017/tidzam-panda', type=str, metavar='DIR',
                     help='path to where coco images stored')
 
 args    = parser.parse_args()
 app     = Flask(__name__, static_url_path='/static')
-app.config["MONGO_URI"] = "mongodb://localhost:27017/tidzam-panda"
+app.config["MONGO_URI"] = "mongodb://" + args.mongo_url
 
 mongo = PyMongo(app)
+
+def load_videos():
+    print("Load Videos from: " + args.data_dir)
+    videos = glob.glob(args.data_dir + "/videos/*.mp4")
+
+    for v in videos:
+        path = v.split("/")[-1]
+        if mongo.db.videos.find_one({"path" : path}) is None:
+            print("Add " + path)
+            video_cap   = cv2.VideoCapture(v)
+            video_cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            _, img = video_cap.read()
+            mongo.db.videos.insert({
+                    "path":path,
+                    "width":img.shape[1],
+                    "height":img.shape[0]
+                    })
+    return
 
 def get_random_video():
     return mongo.db.videos.find()[random.randrange(1)]
@@ -133,4 +156,6 @@ def post_frame_canvas(video_id, frame_id):
 
 
 if __name__ == '__main__':
+    load_videos()
+
     app.run()
