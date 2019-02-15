@@ -3,6 +3,7 @@ import json
 import cv2
 import glob
 import os
+import shutil
 from PIL import Image
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -34,27 +35,8 @@ parser.add_argument('--build_out', default="COCO-panda.json", type=str,
 parser.add_argument('--build', default=False, action='store_true',
                     help='Build COCO dataset')
 
-
-EDGES = {
-  'NOSE'       : 0,
-  'L_EYE'      : 1,
-  'R_EYE'      : 2,
-  'L_EAR'      : 3,
-  'R_EAR'      : 4,
-  'L_SHOULDER' : 5,
-  'R_SHOULDER' : 6,
-  'L_ELBOW'    : 7,
-  'R_ELBOW'    : 8,
-  'L_WRIST'    : 9,
-  'R_WRIST'    : 10,
-  'L_HIP'      : 11,
-  'R_HIP'      : 12,
-  'L_KNEE'     : 13,
-  'R_KNEE'     : 14,
-  'L_ANKLE'    : 15,
-  'R_ANKLE'    : 16
-}
-
+parser.add_argument('--clean_all', default=False, action='store_true',
+                    help='Clean COCO dataset amd images')
 
 args    = parser.parse_args()
 
@@ -65,6 +47,27 @@ def mongo_connect():
         print("Mongo URL is in wrong format : server/database")
         return None
     return client[url[1]]
+
+def clean_all(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR, OUT_FILE):
+    print("\n================")
+    print("CLEANING PROCEDURE ")
+    print("* " + IMAGE_DIR + "/*")
+    print("* " + ANNOTATION_DIR + " /*")
+    print("* " + OUT_FILE+"\n")
+    a = input("Do you want to erase everything ? [N/y]")
+    if (a == 'y' or a == 'Y'):
+        try:
+            shutil.rmtree(IMAGE_DIR + "/*")
+        except:
+            print("")
+        try:
+            shutil.rmtree(ANNOTATION_DIR + " /*")
+        except:
+            print("")
+        try:
+            os.remove(OUT_FILE)
+        except:
+            print("")
 
 def build_images(DATA_DIR, IMAGE_DIR, ANNOTATION_DIR):
     print("\nBuild Images\n============\n")
@@ -122,18 +125,23 @@ def build_coco_dataset(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR):
             	"num_keypoints": 0
             }
 
-            for e in EDGES:
+            for e in coco_output["edges"]:
                 annotation["keypoints"].append(sk[e][0])  # x
                 annotation["keypoints"].append(sk[e][1])  # y
+                annotation["keypoints"].append(2)  # y
                 #annotation["keypoints"].append(sk[e][2]) # value
                 if sk[e][0] != 0 or sk[e][1] != 0:
                     annotation["num_keypoints"] = annotation["num_keypoints"] + 1
             #annotation["bbox"] = sk["bbox"]
             coco_output["annotations"].append(annotation)
 
+    print("\nDataset generated with success.\n")
     return coco_output
 
 if __name__ == '__main__':
+    if args.clean_all:
+        clean_all(args.coco_template, args.coco_images_dir, args.coco_annotations_dir, args.build_out)
+
     if (args.build_image):
         build_images(args.data_dir,args.coco_images_dir, args.coco_annotations_dir)
 
