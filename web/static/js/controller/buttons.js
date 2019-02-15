@@ -259,8 +259,8 @@ function partialReset() {
 
   disableJointsMenu();
 
-  if(_SELECTOR.joint != null) _SELECTOR.joint.selected = False;
-  if(_SELECTOR.skeleton != null) _SELECTOR.skeleton.selected = False;
+  if(_SELECTOR.joint != null) _SELECTOR.joint.selected = false;
+  if(_SELECTOR.skeleton != null) _SELECTOR.skeleton.selected = false;
 
   _SELECTOR.joint    = null;
   _SELECTOR.skeleton = null;
