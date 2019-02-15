@@ -21,7 +21,29 @@ function getFrame(id) {
     TOTAL_FRAMES = json.size;
 
     let img = loadImage(json.img);
-     _FRAMES_DATA.push(new FrameData(img));
+    _FRAMES_DATA.push(new FrameData(img));
+
+    if('skeletons' in json) {
+      let skeletons = json.skeletons;
+
+      _FRAMES_DATA[CURRENT_FRAME].skeletons = [];
+      for(let skeleton of skeletons) {
+          let _skeleton = new Skeleton();
+
+          for(let key of Object.keys(SKELETON)) {
+            if(key in skeleton == false) continue;
+
+            _skeleton.joints[key] = new Joint(
+              Vector2D(skeleton[key][0], skeleton[key][1]),
+              JOINT_COLORS[KELETON[key]],
+              key
+            );
+          }
+
+          _FRAMES_DATA[CURRENT_FRAME].skeletons.push(_skeleton);
+      }
+    }
+
   });
 }
 
