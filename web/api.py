@@ -61,49 +61,51 @@ def load_skeleton(prepared_frame):
                                             "video_id" : prepared_frame["video_id"],
                                             "frame_id": prepared_frame["frame_id"]
                                             })
-    if frame_canvas is None:
-        prev_frame_canvas = list(mongo.db.frameCanvas.find({
-                                                "video_id" : prepared_frame["video_id"],
-                                                "frame_id": {"$lt": prepared_frame["frame_id"]}
-                                                }).sort("frame_id", -1).limit(1))
-
-        # If there is no previous canvas on the video, we leave
-        if(len(prev_frame_canvas) == 0):
-            return prepared_frame
-
-        # OpenCV Extrapolation
-        prev_frame = prepare_frame(prepared_frame["video_id"], prev_frame_canvas[0]["frame_id"])
-        pts = []
-        for skeleton in prev_frame_canvas[0]["skeletons"]:
-            for pt in skeleton:
-                pts.append(tuple(skeleton[pt]))
-
-        prev_frame_gray     = cv2.cvtColor(prev_frame["img"], cv2.COLOR_BGR2GRAY)
-        prepared_frame_gray = cv2.cvtColor(prepared_frame["img"], cv2.COLOR_BGR2GRAY)
-
-
-        pts1, st, err = cv2.calcOpticalFlowPyrLK(
-                            prev_frame_gray,
-                            prepared_frame_gray,
-                            np.array(pts, dtype=np.float32),
-                            None,
-                            **dict(
-                                winSize  = (15,15),
-                                maxLevel = 2,
-                                criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03)))
-        i = 0
-        prepared_frame["skeletons"] = []
-        for skeleton in prev_frame_canvas[0]["skeletons"]:
-            sk = {}
-            for pt in skeleton:
-                sk[pt] = pts1[i].tolist()
-                i = i + 1
-            prepared_frame["skeletons"].append(sk)
-        return prepared_frame
-    else:
+    if frame_canvas is not None:
         del frame_canvas["_id"]
+        if len(frame_canvas["skeletons"]) > 0:
+            return { **prepared_frame, **frame_canvas}
 
-    return { **prepared_frame, **frame_canvas}
+
+    prev_frame_canvas = list(mongo.db.frameCanvas.find({
+                                            "video_id" : prepared_frame["video_id"],
+                                            "frame_id": {"$lt": prepared_frame["frame_id"]}
+                                            }).sort("frame_id", -1).limit(1))
+
+    # If there is no previous canvas on the video, we leave
+    if(len(prev_frame_canvas) == 0):
+        return prepared_frame
+
+    # OpenCV Extrapolation
+    prev_frame = prepare_frame(prepared_frame["video_id"], prev_frame_canvas[0]["frame_id"])
+    pts = []
+    for skeleton in prev_frame_canvas[0]["skeletons"]:
+        for pt in skeleton:
+            pts.append(tuple(skeleton[pt]))
+
+    prev_frame_gray     = cv2.cvtColor(prev_frame["img"], cv2.COLOR_BGR2GRAY)
+    prepared_frame_gray = cv2.cvtColor(prepared_frame["img"], cv2.COLOR_BGR2GRAY)
+
+
+    pts1, st, err = cv2.calcOpticalFlowPyrLK(
+                        prev_frame_gray,
+                        prepared_frame_gray,
+                        np.array(pts, dtype=np.float32),
+                        None,
+                        **dict(
+                            winSize  = (15,15),
+                            maxLevel = 2,
+                            criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03)))
+    i = 0
+    prepared_frame["skeletons"] = []
+    for skeleton in prev_frame_canvas[0]["skeletons"]:
+        sk = {}
+        for pt in skeleton:
+            sk[pt] = pts1[i].tolist()
+            i = i + 1
+        prepared_frame["skeletons"].append(sk)
+    return prepared_frame
+
 
 @app.route('/')
 def index():
@@ -124,7 +126,7 @@ def post_frame_canvas(video_id, frame_id):
     f             = json.loads(str(request.data, 'utf-8'))
     f['video_id'] = video_id
     f['frame_id'] = frame_id
-    if (f['skeletons']):
+    if ('skeletons' in f):
         mongo.db.frameCanvas.delete_one({"video_id" : video_id, "frame_id": frame_id})
         id = mongo.db.frameCanvas.insert(f)
     return jsonify({})
