@@ -160,7 +160,7 @@ function formatSkeletons() {
     for(let _joint_type of Object.keys(SKELETON)) {
       let _joint = _skeleton.joints[_joint_type];
 
-      skeleton[_joint_type] = (_joint == null)? null: [_joint.pos.x, _joint.pos.y];
+      skeleton[_joint_type] = (_joint == null)? null: [_joint.pos.x / IMAGE_SCALE, _joint.pos.y / IMAGE_SCALE];
     }
 
     skeletons.push(skeleton);

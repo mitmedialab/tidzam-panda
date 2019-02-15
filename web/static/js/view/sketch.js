@@ -1,5 +1,6 @@
-let IMAGE_W = null;
-let IMAGE_H = null;
+let IMAGE_W     = null;
+let IMAGE_H     = null;
+let IMAGE_SCALE = null;
 
 let _FRAMES_DATA = null;
 let _SELECTOR    = null;
@@ -17,7 +18,8 @@ function getFrame(id) {
     let json = JSON.parse(data);
 
     IMAGE_W      = 800;
-    IMAGE_H      = int(IMAGE_W / json.width * json.height);
+    IMAGE_SCALE  = IMAGE_W / json.width;
+    IMAGE_H      = int(IMAGE_SCALE * json.height);
     TOTAL_FRAMES = json.size;
 
     let img = loadImage(json.img);
@@ -34,7 +36,7 @@ function getFrame(id) {
             if(key in skeleton == false) continue;
 
             _skeleton.joints[key] = new Joint(
-              Vector2D(skeleton[key][0], skeleton[key][1]),
+              Vector2D(skeleton[key][0] * IMAGE_SCALE, skeleton[key][1] * IMAGE_SCALE),
               JOINT_COLORS[KELETON[key]],
               key
             );
