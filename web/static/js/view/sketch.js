@@ -57,6 +57,7 @@ function preload() {
 
   getFrame(0);
   _SELECTOR.frame_data = _FRAMES_DATA[CURRENT_FRAME];
+  partialReset();
 
   let handle = document.getElementById('card-joints');
   for(let key of Object.keys(SKELETON))
