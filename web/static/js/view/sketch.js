@@ -26,6 +26,7 @@ function getFrame(id) {
     _FRAMES_DATA.push(new FrameData(img));
 
     if('skeletons' in json) {
+      console.log("hello")
       let skeletons = json.skeletons;
 
       _FRAMES_DATA[CURRENT_FRAME].skeletons = [];
@@ -36,8 +37,8 @@ function getFrame(id) {
             if(key in skeleton == false) continue;
 
             _skeleton.joints[key] = new Joint(
-              Vector2D(skeleton[key][0] * IMAGE_SCALE, skeleton[key][1] * IMAGE_SCALE),
-              JOINT_COLORS[KELETON[key]],
+              new Vector2D(skeleton[key][0] * IMAGE_SCALE, skeleton[key][1] * IMAGE_SCALE),
+              JOINT_COLORS[SKELETON[key]],
               key
             );
           }

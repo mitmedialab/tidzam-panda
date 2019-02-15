@@ -48,15 +48,62 @@ def prepare_frame(video_id, frame_id):
 
     return {
         **{
-        'img'   : img_to_b64(img),
+        'img'   : img,
         'width' : img.shape[1],
         'height': img.shape[0],
-        'size'  : frame_count
+        'size'  : frame_count,
+        'video_id' : video_id,
+        'frame_id' : frame_id
         }, **video}
 
-def load_skeleton(frame):
+def load_skeleton(prepared_frame):
+    frame_canvas = mongo.db.frameCanvas.find_one({
+                                            "video_id" : prepared_frame["video_id"],
+                                            "frame_id": prepared_frame["frame_id"]
+                                            })
+    if frame_canvas is None:
+        prev_frame_canvas = list(mongo.db.frameCanvas.find({
+                                                "video_id" : prepared_frame["video_id"],
+                                                "frame_id": {"$lt": prepared_frame["frame_id"]}
+                                                }).sort("frame_id", -1).limit(1))
 
-    return frame
+        # If there is no previous canvas on the video, we leave
+        if(len(prev_frame_canvas) == 0):
+            return prepared_frame
+
+        # OpenCV Extrapolation
+        prev_frame = prepare_frame(prepared_frame["video_id"], prev_frame_canvas[0]["frame_id"])
+        pts = []
+        for skeleton in prev_frame_canvas[0]["skeletons"]:
+            for pt in skeleton:
+                pts.append(tuple(skeleton[pt]))
+
+        prev_frame_gray     = cv2.cvtColor(prev_frame["img"], cv2.COLOR_BGR2GRAY)
+        prepared_frame_gray = cv2.cvtColor(prepared_frame["img"], cv2.COLOR_BGR2GRAY)
+
+
+        pts1, st, err = cv2.calcOpticalFlowPyrLK(
+                            prev_frame_gray,
+                            prepared_frame_gray,
+                            np.array(pts, dtype=np.float32),
+                            None,
+                            **dict(
+                                winSize  = (15,15),
+                                maxLevel = 2,
+                                criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03)))
+        i = 0
+        prepared_frame["skeletons"] = []
+        for skeleton in prev_frame_canvas[0]["skeletons"]:
+            sk = {}
+            for pt in skeleton:
+                sk[pt] = pts1[i].tolist()
+                i = i + 1
+            prepared_frame["skeletons"].append(sk)
+        return prepared_frame
+    else:
+        del frame_canvas["_id"]
+
+    return { **prepared_frame, **frame_canvas}
 
 @app.route('/')
 def index():
@@ -67,24 +114,19 @@ def index():
 
 @app.route('/video/<string:video_id>/<int:frame_id>', methods=['GET'])
 def get_frame(video_id, frame_id):
-    frame = prepare_frame(video_id, frame_id)
-    frame = load_skeleton(frame)
-
+    frame           = prepare_frame(video_id, frame_id)
+    frame           = load_skeleton(frame)
+    frame["img"]    = img_to_b64(frame["img"])
     return jsonify(json.dumps(frame))
 
 @app.route('/video/<string:video_id>/<int:frame_id>', methods=['POST'])
 def post_frame_canvas(video_id, frame_id):
-    print("POST received")
-
-    mongo.db.frameCanvas.delete_one({"video_id" : video_id, "frame_id": frame_id})
-
     f             = json.loads(str(request.data, 'utf-8'))
     f['video_id'] = video_id
     f['frame_id'] = frame_id
-
-    print(f)
-
-    id = mongo.db.frameCanvas.insert(f)
+    if (f['skeletons']):
+        mongo.db.frameCanvas.delete_one({"video_id" : video_id, "frame_id": frame_id})
+        id = mongo.db.frameCanvas.insert(f)
     return jsonify({})
 
 
