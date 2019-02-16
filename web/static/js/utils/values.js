@@ -4,25 +4,25 @@ const ALPHA_FACTOR_ENABLED  = 1.2;
 const ALPHA_UNSELECTED = 125;
 const ALPHA_SELECTED   = 255;
 
-const SKELETON             = Object.freeze({
+const SKELETON             = {
   'NOSE'       : 0,
   'L_EYE'      : 1,
-  'R_EYE'      : 2,
-  'L_EAR'      : 3,
-  'R_EAR'      : 4,
-  'L_SHOULDER' : 5,
-  'R_SHOULDER' : 6,
-  'L_ELBOW'    : 7,
-  'R_ELBOW'    : 8,
-  'L_WRIST'    : 9,
-  'R_WRIST'    : 10,
-  'L_HIP'      : 11,
-  'R_HIP'      : 12,
-  'L_KNEE'     : 13,
-  'R_KNEE'     : 14,
-  'L_ANKLE'    : 15,
+  'L_EAR'      : 2,
+  'L_SHOULDER' : 3,
+  'L_ELBOW'    : 4,
+  'L_WRIST'    : 5,
+  'L_HIP'      : 6,
+  'L_KNEE'     : 7,
+  'L_ANKLE'    : 8,
+  'R_EYE'      : 9,
+  'R_EAR'      : 10,
+  'R_SHOULDER' : 11,
+  'R_ELBOW'    : 12,
+  'R_WRIST'    : 13,
+  'R_HIP'      : 14,
+  'R_KNEE'     : 15,
   'R_ANKLE'    : 16
-});
+};
 const SKELETON_DEFAULT_POS = [
   [631 * 0.5, 411.5 * 0.5],
   [647 * 0.5, 346.5 * 0.5],
@@ -43,6 +43,11 @@ const SKELETON_DEFAULT_POS = [
   [196 * 0.5, 548.5 * 0.5]
 ];
 
+const JOINT_STATES                   = {
+  'UNLABELED'          : 0,
+  'LABELED_NOT_VISIBLE': 1,
+  'LABELED_VISIBLE'    : 2
+};
 const JOINT_RADIUS                   = 6;
 const JOINT_STROKE_WEIGHT            = 1;
 const JOINT_CONNECTION_STROKE_WEIGHT = 3;
@@ -86,5 +91,5 @@ const JOINT_CONNECTIONS             = {
   'R_ANKLE': 'R_KNEE'
 };
 
-const TEXT_SIZE          = 10;
-const TEXT_STROKE_WEIGHT = 1;
+const TEXT_SIZE          = 16;
+const TEXT_STROKE_WEIGHT = 2;

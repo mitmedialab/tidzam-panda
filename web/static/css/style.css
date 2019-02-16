@@ -51,203 +51,82 @@ body {
   background: white;
 }
 
-#card #card-canvas, #card #card-canvas .canvas {
+#card-canvas, #canvas {
   position: relative;
   display: block;
 
-  width: 100%;
+  margin: auto;
+  padding: 0px;
+
+  width: 800px;
   height: auto;
   border-radius: 10px 10px 0px 0px;
 }
 
-#card #card-pandas, #card #card-joints {
+#card-controls {
   position: relative;
-  width: 90%;
+  display: grid;
+
+  grid-template-columns: repeat(5, 1fr);
 
   margin: auto;
-  padding: 15px 0px;
+  padding: 0px;
 
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-gap: 10px;
-
-  border-bottom: solid var(--light-grey) 1px;
-}
-
-#card #card-controls {
-  position: relative;
   width: 100%;
+  height: auto;
+  border-radius: 0px 0px 10px 10px;
 
-  margin: auto;
-
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-}
-
-#card #card-tools {
-  position: relative;
-  width: 100%;
-
-  margin: auto;
-
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-
-  border-bottom: solid var(--light-grey) 1px;
-}
-
-#card #card-submit {
-  position: relative;
-  display: block;
-  width: 100%;
+  overflow: hidden;
 }
 
 button {
-  position: relative;
-
-  border-radius: 5px;
   border: none;
-  padding: 10px;
-
-  width: 100%;
-
-  font-size: 12px;
-  font-weight: bold;
-  color: var(--dark-grey);
+  padding: 10px 15px;
 
   cursor: pointer;
-}
 
-.button-border {
+  font-size: 25px;
   background: none;
-  border: solid var(--primary) 2px;
-  transition: 0.2s;
-}
-.button-border:hover {
-  background: var(--primary-light);
-}
-
-.button-border-disabled {
-  background: none;
-  border: solid var(--primary-light) 2px;
-  transition: 0.2s;
-  color: var(--light-grey);
-}
-
-.button-plain {
-  background: none;
-  transition: 0.2s;
-  background: var(--primary);
-  border: solid var(--primary) 2px;
   color: white;
-}
-.button-plain:hover {
-  background: var(--primary-dark);
-  border: solid var(--primary-dark) 2px;
-}
 
-.button-accent {
-  padding: 15px 10px;
-  border-radius: 0px 0px 10px 10px;
-
-  background: none;
-  transition: 0.2s;
-  background: var(--accent);
-  border: solid var(--accent) 2px;
-
-  color: white;
-}
-.button-accent:hover {
-  background: none;
-  background: var(--accent-dark);
-  border: solid var(--accent-dark) 2px;
-}
-
-.button-del {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-
-  padding: 10px;
-  margin: 0px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-
-  font-size: 20px;
-  line-height: 0px;
-
-  color: white;
-  background-color: var(--dark-grey);
   transition: 0.2s;
 }
-.button-del:hover {
-  background-color: var(--warning);
+button:active {
+  border: none;
 }
 
-.button-holder {
-  position: relative;
+#ADD {
+  background-color: var(--primary);
 }
-
-.button-joint {
-  background: none;
-  border: solid var(--blue) 2px;
-  transition: 0.2s;
+#ADD:hover {
+  background-color: var(--primary-dark);
 }
-.button-joint:hover {
-  background: var(--blue-light);
-}
-.button-joint-disabled {
-  opacity: 0.2;
-  background: none;
-  border: solid var(--blue) 2px;
+#ADD:disabled,
+#ADD[disabled] {
+  background-color: var(--primary-light);
   cursor: default;
 }
-.button-joint-enabled {
-  background: var(--blue);
-  border: solid var(--blue) 2px;
-  color: white;
-  transition: 0.2s;
-}
-.button-joint-enabled:hover {
-  background: none;
-  border: solid var(--blue-dark) 2px;
-  background: var(--blue-dark);
-}
-.button-joint-selected {
-  background: none;
-  border: solid var(--accent) 2px;
-  transition: 0.2s;
-}
-.button-joint-selected:hover {
-  background: var(--accent-light);
-}
 
-.panda-selected {
-  box-shadow: 5px 5px 8px #888;
+#FIRST, #PREV, #NEXT {
+  background-color: var(--accent);
 }
-.panda-selected:hover {
-  box-shadow: 5px 5px 8px #888;
+#FIRST:hover, #PREV:hover, #NEXT:hover {
+  background-color: var(--accent-dark);
 }
-
-.button-control {
-  background: none;
-  transition: 0.2s;
-  border-radius: 0px;
-}
-.button-control:hover {
-  background: var(--accent-light);
-}
-
-.button-control-disabled {
-  background: none;
-  border-radius: 0px;
+#FIRST:disabled,  #PREV:disabled,  #NEXT:disabled,
+#FIRST[disabled], #PREV[disabled], #NEXT[disabled] {
+  background-color: var(--accent-light);
   cursor: default;
-  color: var(--light-grey);
-  transition: 0.2s;
+}
+
+#PLAY {
+  background-color: var(--blue);
+}
+#PLAY:hover {
+  background-color: var(--blue-dark);
+}
+#PLAY:disabled,
+#PLAY[disabled] {
+  background-color: var(--blue-light);
+  cursor: default;
 }

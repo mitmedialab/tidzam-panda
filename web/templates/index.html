@@ -5,7 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>PECS</title>
+    <link rel="icon" type="image/png" href="/static/assets/favicon.png">
+
+    <title>Panda Pose Estimation Tool</title>
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 
@@ -13,16 +15,23 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.dom.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.sound.js"></script>
 
-    <script type="text/javascript" src="static/js/controller/selector.js"></script>
-    <script type="text/javascript" src="static/js/controller/buttons.js"></script>
-    <script type="text/javascript" src="static/js/model/joint.js"></script>
-    <script type="text/javascript" src="static/js/model/frame_data.js"></script>
-    <script type="text/javascript" src="static/js/model/skeleton.js"></script>
-    <script type="text/javascript" src="static/js/model/values.js"></script>
-    <script type="text/javascript" src="static/js/model/vector2d.js"></script>
-    <script type="text/javascript" src="static/js/model/uniqueid.js"></script>
-    <script type="text/javascript" src="static/js/view/sketch.js"></script>
-    <link   rel="stylesheet"      href="static/css/style.css">
+    <script type="text/javascript" src="static/js/utils/generator.js"></script>
+    <script type="text/javascript" src="static/js/utils/values.js"></script>
+    <script type="text/javascript" src="static/js/utils/vector2d.js"></script>
+
+    <script type="text/javascript" src="static/js/api/call.js"></script>
+
+    <script type="text/javascript" src="static/js/models/frame.js"></script>
+    <script type="text/javascript" src="static/js/models/joint.js"></script>
+    <script type="text/javascript" src="static/js/models/selector.js"></script>
+    <script type="text/javascript" src="static/js/models/skeleton.js"></script>
+
+    <script type="text/javascript" src="static/js/canvas/sketch.js"></script>
+
+    <script type="text/javascript" src="static/js/main.js"></script>
+
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   </head>
   <body>
     <script>
@@ -31,17 +40,12 @@
 
     <div id="card">
       <div id="card-canvas"></div>
-      <div id='card-joints'><button id="RESET" class="button-joint-disabled">RESET</button></div>
-      <div id="card-pandas"><button id="ADD" class="button-border" onclick="onAddPandaButton()"><span>+</span> ADD</button></div>
-      <div id="card-tools">
-        <button id="FLIP_V" class="button-control" onclick="onFlipButton('v')">FLIP V</button>
-        <button id="FLIP_H" class="button-control" onclick="onFlipButton('h')">FLIP H</button>
-      </div>
       <div id='card-controls'>
-        <button id="FIRST" class="button-control" onclick="onFirstButton()">FIRST</button>
-        <button id="PREV"  class="button-control" onclick="onPrevButton()">PREV</button>
-        <button id="PLAY"  class="button-control" onclick="onPlayButton(this)">PLAY</button>
-        <button id="NEXT"  class="button-control" onclick="onNextButton(true)">NEXT</button>
+        <button id="ADD"   onclick="addPanda()"   ><i class="fas fa-plus"></i></button>
+        <button id="FIRST" onclick="firstFrame()" ><i class="fas fa-fast-backward"></i></button>
+        <button id="PREV"  onclick="prevFrame()"  ><i class="fas fa-step-backward"></i></button>
+        <button id="PLAY"  onclick="playFrame()"  ><i class="fas fa-play"></i></button>
+        <button id="NEXT"  onclick="nextFrame()"  ><i class="fas fa-step-forward"></i></button>
       </div>
     </div>
 
