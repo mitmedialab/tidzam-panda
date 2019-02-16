@@ -17,6 +17,10 @@ class Selector {
     this.joint_hovered    = null;
   }
 
+  wheel(factor, increment) {
+    if(this.skeleton != null) this.skeleton.scale(factor, increment);
+  }
+
   click() {
     if(this.skeleton != null) {
       this.skeleton.click();
@@ -54,7 +58,7 @@ class Selector {
       case 'DELETE':
         if(this.skeleton != null) {
           this.frame.removeSkeleton(this.skeleton);
-          this.skeleton = null; 
+          this.skeleton = null;
         }
         break;
     }

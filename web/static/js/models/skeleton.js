@@ -8,26 +8,13 @@ class Skeleton {
     this.selected = false;
     this.hover    = false;
 
+    this.scale_n  = 0;
+
     this.resetJoints();
   }
 
   setDefaultSkeleton() {
     for(let label of Object.keys(SKELETON)) this.addJoint(label);
-  }
-
-  scale(factor) {
-    for(let label of Object.keys(SKELETON)) {
-      let joint = this.joints[label];
-      if(joint == null) continue;
-
-      joint.pos.x *= factor;
-      joint.pos.y *= factor;
-    }
-
-    let old_pos = this.pos;
-    let new_pos = this.getBarycenter();
-
-    let d = new Vector2D(old_pos - new_pos)
   }
 
   toJSON() {
@@ -91,6 +78,68 @@ class Skeleton {
     return new Vector2D(pos.x / n, pos.y / n);
   }
 
+  scale(factor, increment) {
+    if(Math.abs(this.scale_n + increment) > 5) return;
+    this.scale_n += increment;
+
+    let old_pos = this.getBarycenter();
+
+    for(let label of Object.keys(SKELETON)) {
+      let joint = this.joints[label];
+      if(joint == null) continue;
+
+      joint.pos.x *= factor;
+      joint.pos.y *= factor;
+    }
+
+    let new_pos = this.getBarycenter();
+
+    let d = new Vector2D(old_pos.x - new_pos.x, old_pos.y - new_pos.y);
+    this.move(d);
+
+    this.pos = this.getBarycenter();
+  }
+
+  swapJoint(a, b) {
+    let joint_a = this.joints[a];
+    let joint_b = this.joints[b];
+
+    if(joint_a == null && joint_b == null) return;
+
+    if(joint_a == null) {
+      joint_b = joint_b.copy();
+
+      this.joints[a]       = joint_b;
+      this.joints[a].color = color(JOINT_COLORS[SKELETON[a]]);
+      this.joints[a].label = a;
+
+      this.joints[b] = null;
+      return;
+    }
+
+    if(joint_b == null) {
+      joint_a = joint_a.copy();
+
+      this.joints[b]       = joint_a;
+      this.joints[b].color = color(JOINT_COLORS[SKELETON[b]]);
+      this.joints[b].label = b;
+
+      this.joints[a] = null;
+      return;
+    }
+
+    joint_a = joint_a.copy();
+    joint_b = joint_b.copy();
+
+    this.joints[a]       = joint_b;
+    this.joints[a].color = color(JOINT_COLORS[SKELETON[a]]);
+    this.joints[a].label = a;
+
+    this.joints[b]       = joint_a;
+    this.joints[b].color = color(JOINT_COLORS[SKELETON[b]]);
+    this.joints[b].label = b;
+  }
+
   flipVertical() {
     let center = this.getBarycenter();
 
@@ -100,6 +149,11 @@ class Skeleton {
 
       let d       = center.x - joint.pos.x;
       joint.pos.x = center.x + d;
+    }
+
+    for(let label of Object.keys(JOINT_PAIRS)) {
+      let opposite = JOINT_PAIRS[label];
+      this.swapJoint(label, opposite);
     }
 
     FRAMES[CURRENT_FRAME].changed = true;

@@ -6,6 +6,7 @@ const ALPHA_SELECTED   = 255;
 
 const SKELETON             = {
   'NOSE'       : 0,
+
   'L_EYE'      : 1,
   'L_EAR'      : 2,
   'L_SHOULDER' : 3,
@@ -14,6 +15,7 @@ const SKELETON             = {
   'L_HIP'      : 6,
   'L_KNEE'     : 7,
   'L_ANKLE'    : 8,
+
   'R_EYE'      : 9,
   'R_EAR'      : 10,
   'R_SHOULDER' : 11,
@@ -53,14 +55,7 @@ const JOINT_STROKE_WEIGHT            = 1;
 const JOINT_CONNECTION_STROKE_WEIGHT = 3;
 const JOINT_COLORS                   = [
   '#CD101E',
-  '#DA30B9',
-  '#ED1556',
-  '#43C247',
-  '#00CD41',
-  '#00DD88',
-  '#0035C1',
-  '#0033B6',
-  '#22216E',
+
   '#A564CA',
   '#BA2165',
   '#DB7C35',
@@ -68,7 +63,16 @@ const JOINT_COLORS                   = [
   '#9AB952',
   '#00BF76',
   '#00C6A2',
-  '#006A7E'
+  '#006A7E',
+
+  '#DA30B9',
+  '#ED1556',
+  '#43C247',
+  '#00CD41',
+  '#00DD88',
+  '#0035C1',
+  '#0033B6',
+  '#22216E'
 ];
 const JOINT_CONNECTIONS             = {
   'L_EAR': 'L_EYE',
@@ -89,6 +93,18 @@ const JOINT_CONNECTIONS             = {
   'R_KNEE' : 'R_HIP',
   'L_ANKLE': 'L_KNEE',
   'R_ANKLE': 'R_KNEE'
+};
+const JOINT_PAIRS                   = {
+  'L_EAR'     : 'R_EAR',
+  'L_EYE'     : 'R_EYE',
+
+  'L_SHOULDER': 'R_SHOULDER',
+  'L_ELBOW'   : 'R_ELBOW',
+  'L_WRIST'   : 'R_WRIST',
+
+  'L_HIP'     : 'R_HIP',
+  'L_KNEE'    : 'R_KNEE',
+  'L_ANKLE'   : 'R_ANKLE'
 };
 
 const TEXT_SIZE          = 16;
