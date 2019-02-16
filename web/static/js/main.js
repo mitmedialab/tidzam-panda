@@ -5,14 +5,13 @@ let CURRENT_FRAME = -1;
 let TOTAL_FRAME   = 0;
 let PLAY          = false;
 
-let IMAGE_W       = null;
+let IMAGE_W       = 1080;
 let IMAGE_H       = null;
 let IMAGE_SCALE   = null;
 
 function setFrame() {
   let json = getFrame(CURRENT_FRAME);
 
-  IMAGE_W     = 800;
   IMAGE_SCALE = IMAGE_W / json.width;
   IMAGE_H     = int(IMAGE_SCALE * json.height);
   TOTAL_FRAME = json.size;

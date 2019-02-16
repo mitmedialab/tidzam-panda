@@ -105,35 +105,46 @@ def load_skeleton(prepared_frame):
     # OpenCV Extrapolation
     prev_frame = prepare_frame(prepared_frame['video_id'], prev_frame_canvas[0]['frame_id'])
     pts        = []
-    for skeleton in prev_frame_canvas[0]['skeletons']:
+    for skeleton in [skeleton['keypoints'] for skeleton in prev_frame_canvas[0]['skeletons']]:
         for pt in skeleton:
             pts.append(tuple(skeleton[pt]))
 
     prev_frame_gray     = cv2.cvtColor(prev_frame['img'], cv2.COLOR_BGR2GRAY)
     prepared_frame_gray = cv2.cvtColor(prepared_frame['img'], cv2.COLOR_BGR2GRAY)
 
+    # import matplotlib.pyplot as plt
+    # plt.figure(figsize=(10, 8))
+    # plt.subplot(121)
+    # plt.imshow(prev_frame_gray)
+    # for pt in pts:
+    #     plt.scatter(pt[0], pt[1])
+    # plt.subplot(122)
+    # plt.imshow(prepared_frame_gray)
+    # plt.show()
+    # exit()
+
+    pts_data = np.array(pts, dtype=np.float32)[:, :2]
     pts1, st, err = cv2.calcOpticalFlowPyrLK(
-        prev_frame_gray,
-        prepared_frame_gray,
-        np.array(pts, dtype=np.float32),
-        None,
-        **dict(
-            winSize  = (15,15),
-            maxLevel = 2,
-            criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03)
-        )
+        prevImg  = prev_frame_gray,
+        nextImg  = prepared_frame_gray,
+        prevPts  = pts_data,
+        nextPts  = None,
+        winSize  = (15, 15),
+        maxLevel = 2,
+        criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03)
     )
 
     i                           = 0
     prepared_frame['skeletons'] = []
-    for skeleton in prev_frame_canvas[0]['skeletons']:
+    for skeleton in [skeleton['keypoints'] for skeleton in prev_frame_canvas[0]['skeletons']]:
         sk = {}
 
         for pt in skeleton:
-            sk[pt] = pts1[i].tolist()
+            point  = pts1[i].tolist()
+            sk[pt] = [point[0], point[1], pts[i][2]]
             i     += 1
 
-        prepared_frame['skeletons'].append(sk)
+        prepared_frame['skeletons'].append({'keypoints': sk})
 
     return prepared_frame
 
