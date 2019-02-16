@@ -18,12 +18,13 @@ function setFrame() {
 
   let img   = loadImage(json.img);
   let frame = new Frame(img);
-  FRAMES.push(frame);
+
+  if(CURRENT_FRAME > FRAMES.length - 1) FRAMES.push(frame);
+  else FRAMES[CURRENT_FRAME] = frame;
 
   if('skeletons' in json == false) return;
-  if(json.skeletons.length <= 0) return;
-
   let skeletons = json.skeletons;
+
   for(let skeleton of skeletons){
     let s = frame.addSkeleton();
 
@@ -34,6 +35,8 @@ function setFrame() {
       j.state   = joint[2];
     }
   }
+
+  console.log('HEY', frame);
 }
 
 function nextFrame() {
