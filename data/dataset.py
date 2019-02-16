@@ -4,6 +4,7 @@ import cv2
 import glob
 import os
 import shutil
+import numpy as np
 from PIL import Image
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -56,14 +57,9 @@ def clean_all(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR, OUT_FILE):
     print("* " + OUT_FILE+"\n")
     a = input("Do you want to erase everything ? [N/y]")
     if (a == 'y' or a == 'Y'):
-        try:
-            shutil.rmtree(IMAGE_DIR + "/*")
-        except:
-            print("")
-        try:
-            shutil.rmtree(ANNOTATION_DIR + " /*")
-        except:
-            print("")
+        filelist = glob.glob(IMAGE_DIR + "/*") + glob.glob(ANNOTATION_DIR + "/*")
+        for f in filelist:
+            os.remove(f)
         try:
             os.remove(OUT_FILE)
         except:
@@ -75,14 +71,22 @@ def build_images(DATA_DIR, IMAGE_DIR, ANNOTATION_DIR):
     for v in db.frameCanvas.find({}).sort([("video_id", 1),("frame_id", 1)]):
         # Get video info
         video = db.videos.find_one({"_id":ObjectId(v["video_id"])})
-        # Extract the frame
-        video_cap   = cv2.VideoCapture(DATA_DIR + "/videos/" +video["path"])
-        video_cap.set(cv2.CAP_PROP_POS_FRAMES, v["frame_id"])
-        _, img = video_cap.read()
 
-        filename = IMAGE_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"])+ '.jpg'
-        cv2.imwrite(filename, img)
-        print(filename)
+        for i, sk in enumerate(v["skeletons"]):
+            # Extract the frame
+            video_cap   = cv2.VideoCapture(DATA_DIR + "/videos/" +video["path"])
+            video_cap.set(cv2.CAP_PROP_POS_FRAMES, v["frame_id"])
+            _, img = video_cap.read()
+
+            filename = IMAGE_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"])+ '-' + str(i) +'.jpg'
+            cv2.imwrite(filename, img)
+
+            mask = np.zeros(img.shape, dtype = "uint8")
+            cv2.rectangle(mask, (int(sk["bbox"][0]), int(sk["bbox"][1])), (int(sk["bbox"][0]+sk["bbox"][2]), int(sk["bbox"][1]+sk["bbox"][3])), (255, 255, 255), -1)
+            filename = ANNOTATION_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"])+  '-' + str(i) +'.jpg'
+            cv2.imwrite(filename, mask)
+
+            print(filename)
 
 
 def build_coco_dataset(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR):
@@ -126,13 +130,12 @@ def build_coco_dataset(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR):
             }
 
             for e in coco_output["edges"]:
-                annotation["keypoints"].append(sk[e][0])  # x
-                annotation["keypoints"].append(sk[e][1])  # y
-                annotation["keypoints"].append(2)  # y
-                #annotation["keypoints"].append(sk[e][2]) # value
-                if sk[e][0] != 0 or sk[e][1] != 0:
+                annotation["keypoints"].append(sk["keypoints"][e][0])  # x
+                annotation["keypoints"].append(sk["keypoints"][e][1])  # y
+                annotation["keypoints"].append(sk["keypoints"][e][2]) # value
+                if sk["keypoints"][e][0] != 0 or sk["keypoints"][e][1] != 0:
                     annotation["num_keypoints"] = annotation["num_keypoints"] + 1
-            #annotation["bbox"] = sk["bbox"]
+            annotation["bbox"] = sk["bbox"]
             coco_output["annotations"].append(annotation)
 
     print("\nDataset generated with success.\n")
