@@ -15,8 +15,25 @@ class Skeleton {
     for(let label of Object.keys(SKELETON)) this.addJoint(label);
   }
 
+  scale(factor) {
+    for(let label of Object.keys(SKELETON)) {
+      let joint = this.joints[label];
+      if(joint == null) continue;
+
+      joint.pos.x *= factor;
+      joint.pos.y *= factor;
+    }
+
+    let old_pos = this.pos;
+    let new_pos = this.getBarycenter();
+
+    let d = new Vector2D(old_pos - new_pos)
+  }
+
   toJSON() {
-    let json = {};
+    let json = {
+      'id' : this.id
+    };
 
     let skeleton = {};
     for(let label of Object.keys(SKELETON))
