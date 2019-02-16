@@ -14,6 +14,17 @@ class Joint {
     this.state        = JOINT_STATES['LABELED_VISIBLE'];
   }
 
+  copy() {
+    let joint          = new Joint(new Vector2D(this.pos.x, this.pos.y), this.label, this.skeleton);
+    joint.id           = this.id;
+    joint.alpha_factor = this.alpha_factor;
+    joint.selected     = this.selected;
+    joint.hober        = this.hover;
+    joint.state        = this.state;
+
+    return joint;
+  }
+
   toJSON() {
     return [this.pos.x / IMAGE_SCALE, this.pos.y / IMAGE_SCALE, this.state];
   }

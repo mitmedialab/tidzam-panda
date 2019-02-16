@@ -12,6 +12,12 @@ function setup() {
   canvas.parent('card-canvas');
 }
 
+function mouseWheel(event) {
+  if(PLAY == true) return;
+
+  SELECTOR.wheel(event.delta > 0 ? 1.2 : 1 / 1.2, event.delta > 0 ? 1 : -1);
+}
+
 function mousePressed() {
   if(PLAY == true) return;
 
