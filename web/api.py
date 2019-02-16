@@ -38,16 +38,19 @@ def load_videos():
 
         if mongo.db.videos.find_one({'path' : path}) is None:
             print('Add ' + path)
+
             video_cap = cv2.VideoCapture(v)
             video_cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
             _, img = video_cap.read()
 
             mongo.db.videos.insert({
-                'path':path,
-                'width':img.shape[1],
+                'path'  :path,
+                'width' :img.shape[1],
                 'height':img.shape[0]
             })
+
+    print()
 
 def get_random_video():
     return mongo.db.videos.find()[random.randrange(1)]
@@ -72,61 +75,54 @@ def prepare_frame(video_id, frame_id):
     video_cap.release()
 
     return {**{
-        'img'   : img,
-        'width' : img.shape[1],
-        'height': img.shape[0],
-        'size'  : frame_count,
+        'img'      : img,
+        'width'    : img.shape[1],
+        'height'   : img.shape[0],
+        'size'     : frame_count,
         'video_id' : video_id,
         'frame_id' : frame_id
     }, **video}
 
-def load_skeleton(prepared_frame):
+def load_skeleton(next_frame):
     frame_canvas = mongo.db.frameCanvas.find_one({
-        'video_id' : prepared_frame['video_id'],
-        'frame_id': prepared_frame['frame_id']
+        'video_id': next_frame['video_id'],
+        'frame_id': next_frame['frame_id']
     })
 
     if frame_canvas is not None:
         del frame_canvas['_id']
 
         if len(frame_canvas['skeletons']) > 0:
-            return { **prepared_frame, **frame_canvas }
+            return { **next_frame, **frame_canvas }
 
 
     prev_frame_canvas = list(mongo.db.frameCanvas.find({
-        'video_id' : prepared_frame['video_id'],
-        'frame_id': {'$lt': prepared_frame['frame_id']}
-    }).sort('frame_id', -1).limit(1))
+        'video_id': next_frame['video_id'],
+        'frame_id': (next_frame['frame_id'] - 1)
+    }))
 
     # If there is no previous canvas on the video, we leave
-    if(len(prev_frame_canvas) == 0):
-        return prepared_frame
+    if len(prev_frame_canvas) == 0:
+        return next_frame
+
+    if len(prev_frame_canvas[0]['skeletons']) == 0:
+        return next_frame
 
     # OpenCV Extrapolation
-    prev_frame = prepare_frame(prepared_frame['video_id'], prev_frame_canvas[0]['frame_id'])
+    prev_frame = prepare_frame(next_frame['video_id'], prev_frame_canvas[0]['frame_id'])
     pts        = []
     for skeleton in [skeleton['keypoints'] for skeleton in prev_frame_canvas[0]['skeletons']]:
         for pt in skeleton:
             pts.append(tuple(skeleton[pt]))
 
-    prev_frame_gray     = cv2.cvtColor(prev_frame['img'], cv2.COLOR_BGR2GRAY)
-    prepared_frame_gray = cv2.cvtColor(prepared_frame['img'], cv2.COLOR_BGR2GRAY)
+    prev_frame_gray = cv2.cvtColor(prev_frame['img'], cv2.COLOR_BGR2GRAY)
+    next_frame_gray = cv2.cvtColor(next_frame['img'], cv2.COLOR_BGR2GRAY)
 
-    # import matplotlib.pyplot as plt
-    # plt.figure(figsize=(10, 8))
-    # plt.subplot(121)
-    # plt.imshow(prev_frame_gray)
-    # for pt in pts:
-    #     plt.scatter(pt[0], pt[1])
-    # plt.subplot(122)
-    # plt.imshow(prepared_frame_gray)
-    # plt.show()
-    # exit()
+    pts_data = np.array(pts)[:, :2].astype(np.float32)
 
-    pts_data = np.array(pts, dtype=np.float32)[:, :2]
     pts1, st, err = cv2.calcOpticalFlowPyrLK(
         prevImg  = prev_frame_gray,
-        nextImg  = prepared_frame_gray,
+        nextImg  = next_frame_gray,
         prevPts  = pts_data,
         nextPts  = None,
         winSize  = (15, 15),
@@ -134,8 +130,8 @@ def load_skeleton(prepared_frame):
         criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03)
     )
 
-    i                           = 0
-    prepared_frame['skeletons'] = []
+    i                       = 0
+    next_frame['skeletons'] = []
     for skeleton in [skeleton['keypoints'] for skeleton in prev_frame_canvas[0]['skeletons']]:
         sk = {}
 
@@ -144,9 +140,9 @@ def load_skeleton(prepared_frame):
             sk[pt] = [point[0], point[1], pts[i][2]]
             i     += 1
 
-        prepared_frame['skeletons'].append({'keypoints': sk})
+        next_frame['skeletons'].append({'keypoints': sk})
 
-    return prepared_frame
+    return next_frame
 
 
 @app.route('/')
@@ -170,7 +166,6 @@ def post_frame_canvas(video_id, frame_id):
     f             = json.loads(str(request.data, 'utf-8'))
     f['video_id'] = video_id
     f['frame_id'] = frame_id
-    print('\n', f, '\n')
 
     if ('skeletons' in f):
         mongo.db.frameCanvas.delete_one({'video_id' : video_id, 'frame_id': frame_id})

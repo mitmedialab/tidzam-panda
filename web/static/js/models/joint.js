@@ -56,6 +56,7 @@ class Joint {
     this.pos.y += mouse.y;
 
     this.skeleton.pos = this.skeleton.getBarycenter();
+    FRAMES[CURRENT_FRAME].changed = true;
   }
 
   click() {

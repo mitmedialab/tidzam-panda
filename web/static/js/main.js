@@ -25,10 +25,10 @@ function setFrame() {
 
   let skeletons = json.skeletons;
   for(let skeleton of skeletons){
-    let s = FRAMES[CURRENT_FRAME].addSkeleton();
+    let s = frame.addSkeleton();
 
     for(let label of Object.keys(SKELETON)){
-      let joint = skeleton[label];
+      let joint = skeleton.keypoints[label];
       let j     = s.addJoint(label);
       j.pos     = new Vector2D(joint[0] * IMAGE_SCALE, joint[1] * IMAGE_SCALE);
       j.state   = joint[2];
@@ -43,6 +43,11 @@ function nextFrame() {
   CURRENT_FRAME++;
   SELECTOR.reset();
   updateButtons();
+
+  if(FRAMES.length > 0 && FRAMES[CURRENT_FRAME - 1].changed) {
+    setFrame();
+    return;
+  }
 
   if(CURRENT_FRAME < FRAMES.length) return;
   setFrame();
@@ -78,6 +83,8 @@ function addPanda() {
   let skeleton = FRAMES[CURRENT_FRAME].addSkeleton();
   skeleton.setDefaultSkeleton();
   updateButtons();
+
+  FRAMES[CURRENT_FRAME].changed = true;
 }
 
 function updateButtons() {

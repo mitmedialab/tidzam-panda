@@ -21,4 +21,6 @@ function postFrame(frame, id) {
     contentType: "application/json",
     dataType   : 'json'
   });
+
+  if(FRAMES.length > 0) FRAMES[CURRENT_FRAME].false;
 }

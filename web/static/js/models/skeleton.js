@@ -84,6 +84,8 @@ class Skeleton {
       let d       = center.x - joint.pos.x;
       joint.pos.x = center.x + d;
     }
+
+    FRAMES[CURRENT_FRAME].changed = true;
   }
 
   flipHorizontal() {
@@ -96,6 +98,8 @@ class Skeleton {
       let d       = center.y - joint.pos.y;
       joint.pos.y = center.y + d;
     }
+
+    FRAMES[CURRENT_FRAME].changed = true;
   }
 
   resetJoints() {
@@ -261,6 +265,8 @@ class Skeleton {
 
       joint.move(mouse);
     }
+
+    FRAMES[CURRENT_FRAME].changed = true;
   }
 
   click() {

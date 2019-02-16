@@ -4,6 +4,7 @@ class Frame {
     this.img       = img;
 
     this.skeletons = [];
+    this.changed   = false;
   }
 
   toJSON() {
