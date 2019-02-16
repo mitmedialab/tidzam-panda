@@ -54,6 +54,8 @@ function prevFrame() {
   postFrame(FRAMES[CURRENT_FRAME], CURRENT_FRAME);
   CURRENT_FRAME--;
   updateButtons();
+
+  setFrame();
 }
 
 function firstFrame() {
