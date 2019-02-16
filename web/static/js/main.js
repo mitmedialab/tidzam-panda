@@ -44,12 +44,6 @@ function nextFrame() {
   SELECTOR.reset();
   updateButtons();
 
-  if(FRAMES.length > 0 && FRAMES[CURRENT_FRAME - 1].changed) {
-    setFrame();
-    return;
-  }
-
-  if(CURRENT_FRAME < FRAMES.length) return;
   setFrame();
 }
 
