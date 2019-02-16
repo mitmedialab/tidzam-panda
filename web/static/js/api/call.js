@@ -22,5 +22,5 @@ function postFrame(frame, id) {
     dataType   : 'json'
   });
 
-  if(FRAMES.length > 0) FRAMES[CURRENT_FRAME].false;
+  if(FRAMES.length > 0) FRAMES[CURRENT_FRAME].changed = false;
 }

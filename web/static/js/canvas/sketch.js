@@ -32,7 +32,7 @@ function drawFrameInfo() {
   textSize(TEXT_SIZE);
   textAlign(LEFT, TOP);
 
-  text('FRAME: ' + (CURRENT_FRAME + 1) + '/' + TOTAL_FRAME, 10, 10);
+  text('FRAME: ' + CURRENT_FRAME + '/' + (TOTAL_FRAME - 1), 10, 10);
   text('SKELETONS: ' + (
     SELECTOR.frame != null ? SELECTOR.frame.skeletons.length : 0
   ), 10, 10 + TEXT_SIZE + 10);
