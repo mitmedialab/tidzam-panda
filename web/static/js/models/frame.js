@@ -9,7 +9,8 @@ class Frame {
 
   toJSON() {
     let json = {
-      'skeletons': []
+      'skeletons': [],
+      'id'       : this.id
     };
 
     for(let skeleton of this.skeletons)
