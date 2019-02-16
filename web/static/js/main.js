@@ -35,8 +35,6 @@ function setFrame() {
       j.state   = joint[2];
     }
   }
-
-  console.log('HEY', frame);
 }
 
 function nextFrame() {
