@@ -164,6 +164,24 @@ def index():
     )
 
 ###
+@app.route('/video/', methods=['GET'])
+def get_videos():
+    res = []
+    for video in mongo.db.videos.find():
+        video["_id"] = str(video["_id"])
+        res.append(video)
+    return jsonify(res)
+
+@app.route('/video/<string:video_id>/status', methods=['POST'])
+def set_video_status(video_id):
+    res = mongo.db.videos.update_one(
+        {'_id' : ObjectId(video_id)},
+        {
+            "$set" : {
+                "status": str(request.data, 'utf-8')
+                }
+        })
+    return jsonify({})
 
 @app.route('/video/<string:video_id>/<int:frame_id>', methods=['GET'])
 def get_frame(video_id, frame_id):
@@ -188,4 +206,4 @@ def post_frame_canvas(video_id, frame_id):
 if __name__ == '__main__':
     load_videos()
 
-    app.run()
+    app.run(threaded=True)
