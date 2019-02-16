@@ -89,31 +89,42 @@ def load_skeleton(next_frame):
         'frame_id': next_frame['frame_id']
     })
 
+    prev_frame_canvas = mongo.db.frameCanvas.find_one({
+        'video_id': next_frame['video_id'],
+        'frame_id': (next_frame['frame_id'] - 1)
+    })
+
     if frame_canvas is not None:
         del frame_canvas['_id']
 
-        if len(frame_canvas['skeletons']) > 0:
+        if prev_frame_canvas is None:
             return { **next_frame, **frame_canvas }
 
-
-    prev_frame_canvas = list(mongo.db.frameCanvas.find({
-        'video_id': next_frame['video_id'],
-        'frame_id': (next_frame['frame_id'] - 1)
-    }))
+        if len(frame_canvas['skeletons']) == len(prev_frame_canvas['skeletons']):
+            return { **next_frame, **frame_canvas }
 
     # If there is no previous canvas on the video, we leave
     if len(prev_frame_canvas) == 0:
         return next_frame
 
-    if len(prev_frame_canvas[0]['skeletons']) == 0:
+    if len(prev_frame_canvas['skeletons']) == 0:
         return next_frame
 
     # OpenCV Extrapolation
-    prev_frame = prepare_frame(next_frame['video_id'], prev_frame_canvas[0]['frame_id'])
+    prev_frame = prepare_frame(next_frame['video_id'], prev_frame_canvas['frame_id'])
     pts        = []
-    for skeleton in [skeleton['keypoints'] for skeleton in prev_frame_canvas[0]['skeletons']]:
-        for pt in skeleton:
-            pts.append(tuple(skeleton[pt]))
+    for skeleton in [skeleton for skeleton in prev_frame_canvas['skeletons']]:
+
+        if frame_canvas:
+            skeleton_already_present = False
+            for sk in frame_canvas["skeletons"]:
+                if skeleton["id"] == sk["id"]:
+                    skeleton_already_present = True
+            if skeleton_already_present:
+                continue
+
+        for pt in skeleton['keypoints']:
+            pts.append(tuple(skeleton['keypoints'][pt]))
 
     prev_frame_gray = cv2.cvtColor(prev_frame['img'], cv2.COLOR_BGR2GRAY)
     next_frame_gray = cv2.cvtColor(next_frame['img'], cv2.COLOR_BGR2GRAY)
@@ -132,7 +143,7 @@ def load_skeleton(next_frame):
 
     i                       = 0
     next_frame['skeletons'] = []
-    for skeleton in [skeleton['keypoints'] for skeleton in prev_frame_canvas[0]['skeletons']]:
+    for skeleton in [skeleton['keypoints'] for skeleton in prev_frame_canvas['skeletons']]:
         sk = {}
 
         for pt in skeleton:
