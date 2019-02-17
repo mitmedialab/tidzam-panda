@@ -94,6 +94,7 @@ def load_skeleton(next_frame):
         'frame_id': (next_frame['frame_id'] - 1)
     })
 
+    print('\n=============\n', next_frame, frame_canvas, prev_frame_canvas, '\n=============\n')
     if frame_canvas is not None:
         del frame_canvas['_id']
 
@@ -158,9 +159,13 @@ def load_skeleton(next_frame):
 
 @app.route('/')
 def index():
+    return render_template('index.html')
+
+@app.route('/video/<string:video_id>/')
+def skeleton(video_id):
     return render_template(
-        'index.html',
-        url=get_random_video()['_id']
+        'video.html',
+        url=video_id
     )
 
 ###
@@ -176,11 +181,8 @@ def get_videos():
 def set_video_status(video_id):
     res = mongo.db.videos.update_one(
         {'_id' : ObjectId(video_id)},
-        {
-            "$set" : {
-                "status": str(request.data, 'utf-8')
-                }
-        })
+        {'$set': {'status': str(request.data, 'utf-8')}}
+    )
     return jsonify({})
 
 @app.route('/video/<string:video_id>/<int:frame_id>', methods=['GET'])

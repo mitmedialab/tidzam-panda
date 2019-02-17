@@ -2,7 +2,9 @@
 
 :root {
   --dark-grey: #161616;
+  --grey: #aaa;
   --light-grey: #ececec;
+  --lighter-grey: #f7f7f7;
 
   --primary-dark: #618833;
   --primary: #cddc39;
@@ -47,6 +49,7 @@ body {
   width: auto;
   height: auto;
   border-radius: 10px;
+  overflow: hidden;
 
   background: white;
 }
@@ -129,4 +132,49 @@ button:active {
 #PLAY[disabled] {
   background-color: var(--blue-light);
   cursor: default;
+}
+
+#card-list #card-list-row:nth-child(odd) {
+  background: white;
+}
+#card-list #card-list-row:nth-child(even) {
+  background: var(--lighter-grey);
+}
+
+#card-list {
+  position: relative;
+  display: grid;
+
+  grid-template-columns: 1fr;
+  grid-gap: 0px;
+}
+
+#card-list-link {
+  background-color: var(--blue);
+}
+#card-list-link:hover {
+  background-color: var(--blue-dark);
+}
+
+#card-list-row {
+  position: relative;
+  display: grid;
+
+  padding: 0px;
+  margin: 0px;
+
+  grid-template-columns: 2fr 1fr 2fr 2fr;
+  grid-column-gap: 10px;
+  grid-row-gap: 0px;
+
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#card-list-id {
+  text-align: center;
+  padding: 15px;
+
+  color: var(--grey);
 }

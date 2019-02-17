@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/favicon.png') }}">
+
+    <title>Panda Pose Estimation Tool</title>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/p5.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.dom.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.sound.js"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/utils/generator.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/utils/values.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/utils/vector2d.js') }}"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/api/call.js') }}"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/models/frame.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/models/joint.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/models/selector.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/models/skeleton.js') }}"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/canvas/sketch.js') }}"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  </head>
+  <body>
+    <script>
+      let VIDEO_URL  = '{{ url|safe }}';
+    </script>
+
+    <div id="card">
+      <div id="card-canvas"></div>
+      <div id='card-controls'>
+        <button id="ADD"   onclick="addPanda()"   ><i class="fas fa-plus"></i></button>
+        <button id="FIRST" onclick="firstFrame()" ><i class="fas fa-fast-backward"></i></button>
+        <button id="PREV"  onclick="prevFrame()"  ><i class="fas fa-step-backward"></i></button>
+        <button id="PLAY"  onclick="playFrame()"  ><i class="fas fa-play"></i></button>
+        <button id="NEXT"  onclick="nextFrame()"  ><i class="fas fa-step-forward"></i></button>
+      </div>
+    </div>
+
+  </body>
+</html>

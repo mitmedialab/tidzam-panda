@@ -1,5 +1,5 @@
 function getFrame(id) {
-  let url  = 'video/' + VIDEO_URL + '/' + id;
+  let url  = '' + id;
 
   let json = null;
   $.ajaxSetup({async: false});
@@ -16,11 +16,23 @@ function postFrame(frame, id) {
   $.ajaxSetup({async: false});
   $.ajax({
     type       : 'POST',
-    url        : 'video/' + VIDEO_URL + '/' + id,
+    url        : '' + id,
     data       : json,
     contentType: "application/json",
     dataType   : 'json'
   });
 
   if(FRAMES.length > 0) FRAMES[CURRENT_FRAME].changed = false;
+}
+
+function getVideoList() {
+  let url = 'video/';
+
+  let json = null;
+  $.ajaxSetup({async: false});
+  $.get(url, function(data){
+    json = JSON.parse(JSON.stringify(data, null, 4));
+  });
+
+  return json;
 }
