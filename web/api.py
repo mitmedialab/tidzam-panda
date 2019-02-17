@@ -52,8 +52,8 @@ def load_videos():
 
     print()
 
-def get_random_video():
-    return mongo.db.videos.find()[random.randrange(1)]
+def get_video(video_id):
+    return mongo.db.videos.find_one({ '_id': ObjectId(video_id) })
 
 def img_to_b64(img):
     pil_img = Image.fromarray(img)
@@ -63,7 +63,7 @@ def img_to_b64(img):
     return 'data:image/jpg;base64,' + str(base64.b64encode(buff.getvalue()).decode('utf-8'))
 
 def prepare_frame(video_id, frame_id):
-    video = mongo.db.videos.find_one({'_id' : ObjectId(video_id)})
+    video = get_video(video_id)
     del video['_id']
 
     video_cap   = cv2.VideoCapture(args.data_dir + '/videos/' + video['path'])
@@ -94,7 +94,6 @@ def load_skeleton(next_frame):
         'frame_id': (next_frame['frame_id'] - 1)
     })
 
-    print('\n=============\n', next_frame, frame_canvas, prev_frame_canvas, '\n=============\n')
     if frame_canvas is not None:
         del frame_canvas['_id']
 
