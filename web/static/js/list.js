@@ -8,7 +8,7 @@ function redirect(href) {
 function getStatus(video) {
   let status = 'unprocessed';
 
-  switch (video.status) {
+  switch (parseInt(video.status)) {
     case 0:
         status = 'unprocessed'
       break;
@@ -16,7 +16,7 @@ function getStatus(video) {
         status = 'pending'
       break;
     case 2:
-        status = 'processed'
+        status = 'verified'
       break;
   }
 
@@ -28,7 +28,10 @@ function setVideoButton(video) {
   button    += '<div id="card-list-id">' + video._id + '</div>';
   button    += '<div id="card-list-size">' + video.width + 'x' + video.height + '</div>';
   button    += '<div id="card-list-path">' + video.path + '</div>';
-  button    += '<div id="card-list-status" class="' + getStatus(video.status) + '"></div>'
+  button    += '<div id="card-list-status-wrapper">';
+  button    += '<div>' + getStatus(video) + '</div>';
+  button    += '<div id="card-list-status" class="' + getStatus(video) + '"></div>';
+  button    += '</div>';
   button    += '<button id="card-list-link" href="video/' + video._id + '/" onclick="redirect(this.getAttribute(\'href\'))">GO</button>';
   button    += '</div>';
 

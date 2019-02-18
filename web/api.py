@@ -5,12 +5,12 @@ import base64
 import cv2
 import json
 import glob
-from bson.objectid import ObjectId
 
 from io import BytesIO
 from PIL import Image
 
 from flask import Flask, render_template, jsonify
+from bson.objectid import ObjectId
 from flask_pymongo import PyMongo
 from flask import request
 from flask import abort
@@ -23,8 +23,8 @@ parser.add_argument('--data_dir', default='data/', type=str, metavar='DIR',
 parser.add_argument('--mongo_url', default='localhost:27017/tidzam-panda', type=str, metavar='DIR',
                     help='path to where coco images stored')
 
-args    = parser.parse_args()
-app     = Flask(__name__, static_url_path='/static')
+args                    = parser.parse_args()
+app                     = Flask(__name__, static_url_path='/static')
 app.config['MONGO_URI'] = 'mongodb://' + args.mongo_url
 
 mongo = PyMongo(app)
@@ -178,6 +178,12 @@ def get_videos():
         res.append(video)
     return jsonify(res)
 
+@app.route('/video/<string:video_id>/status', methods=['GET'])
+def get_video_status(video_id):
+    res = mongo.db.videos.find_one({'_id': ObjectId(video_id)})
+    del res['_id']
+    return jsonify(res)
+
 @app.route('/video/<string:video_id>/status', methods=['POST'])
 def set_video_status(video_id):
     res = mongo.db.videos.update_one(
@@ -187,6 +193,7 @@ def set_video_status(video_id):
         }}
     )
     return jsonify({})
+
 
 @app.route('/video/<string:video_id>/<int:frame_id>', methods=['GET'])
 def get_frame(video_id, frame_id):

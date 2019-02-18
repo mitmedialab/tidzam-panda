@@ -22,18 +22,6 @@ class Selector {
   }
 
   click() {
-    if(this.skeleton != null) {
-      this.skeleton.click();
-      this.skeleton = null;
-      return;
-    }
-
-    if(this.joint != null) {
-      this.joint.click();
-      this.joint = null;
-      return;
-    }
-
     if(this.joint_hovered) {
       this.joint = this.joint_hovered;
       this.joint.click();
@@ -43,6 +31,34 @@ class Selector {
     if(this.skeleton_hovered) {
       this.skeleton = this.skeleton_hovered;
       this.skeleton.click();
+      return;
+    }
+
+    if(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+      let skeleton  = addPanda();
+      skeleton.pos  = skeleton.getBarycenter();
+      let d         = new Vector2D(mouseX - skeleton.pos.x, mouseY - skeleton.pos.y);
+
+      skeleton.move(d);
+
+      skeleton.pos  = skeleton.getBarycenter();
+      this.skeleton = skeleton;
+      this.skeleton.isHover(new Vector2D(mouseX, mouseY));
+
+      skeleton.click();
+    }
+  }
+
+  release() {
+    if(this.skeleton != null) {
+      this.skeleton.click();
+      this.skeleton = null;
+      return;
+    }
+
+    if(this.joint != null) {
+      this.joint.click();
+      this.joint = null;
       return;
     }
   }
@@ -59,6 +75,9 @@ class Selector {
         if(this.skeleton != null) {
           this.frame.removeSkeleton(this.skeleton);
           this.skeleton = null;
+        }
+        if(this.joint != null) {
+          this.joint.switchState();
         }
         break;
     }

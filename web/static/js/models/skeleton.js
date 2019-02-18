@@ -110,7 +110,7 @@ class Skeleton {
       joint_b = joint_b.copy();
 
       this.joints[a]       = joint_b;
-      this.joints[a].color = color(JOINT_COLORS[SKELETON[a]]);
+      this.joints[a].color = color(JOINT_COLORS[SKELETON[b]]);
       this.joints[a].label = a;
 
       this.joints[b] = null;
@@ -121,7 +121,7 @@ class Skeleton {
       joint_a = joint_a.copy();
 
       this.joints[b]       = joint_a;
-      this.joints[b].color = color(JOINT_COLORS[SKELETON[b]]);
+      this.joints[b].color = color(JOINT_COLORS[SKELETON[a]]);
       this.joints[b].label = b;
 
       this.joints[a] = null;
@@ -132,11 +132,11 @@ class Skeleton {
     joint_b = joint_b.copy();
 
     this.joints[a]       = joint_b;
-    this.joints[a].color = color(JOINT_COLORS[SKELETON[a]]);
+    this.joints[a].color = color(JOINT_COLORS[SKELETON[b]]);
     this.joints[a].label = a;
 
     this.joints[b]       = joint_a;
-    this.joints[b].color = color(JOINT_COLORS[SKELETON[b]]);
+    this.joints[b].color = color(JOINT_COLORS[SKELETON[a]]);
     this.joints[b].label = b;
   }
 
@@ -210,7 +210,8 @@ class Skeleton {
       let joint = this.joints[label];
       if(joint == null) continue;
 
-      joint.alpha_factor = this.hover? ALPHA_FACTOR_ENABLED: ALPHA_FACTOR_DISABLED;
+      joint.alpha_factor = (this.hover) ? ALPHA_FACTOR_ENABLED:
+                           ALPHA_FACTOR_DISABLED;
 
       joint.draw();
     }

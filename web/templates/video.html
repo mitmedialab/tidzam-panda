@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="icon" type="image/png" href="/panda/static/assets/favicon.png">
 
     <title>Panda Pose Estimation Tool</title>
 
@@ -37,15 +37,36 @@
     <script>
       let VIDEO_URL  = '{{ url|safe }}';
     </script>
+    <button id="BACK" onclick="backToList()"><i class="fas fa-arrow-left"></i></button>
 
-    <div id="card">
-      <div id="card-canvas"></div>
-      <div id='card-controls'>
-        <button id="ADD"   onclick="addPanda()"   ><i class="fas fa-plus"></i></button>
-        <button id="FIRST" onclick="firstFrame()" ><i class="fas fa-fast-backward"></i></button>
-        <button id="PREV"  onclick="prevFrame()"  ><i class="fas fa-step-backward"></i></button>
-        <button id="PLAY"  onclick="playFrame()"  ><i class="fas fa-play"></i></button>
-        <button id="NEXT"  onclick="nextFrame()"  ><i class="fas fa-step-forward"></i></button>
+    <div id='cards'>
+      <div id="card">
+        <div id="card-canvas"></div>
+
+        <div id='card-controls'>
+          <button id="FIRST" onclick="firstFrame()" ><i class="fas fa-fast-backward"></i></button>
+          <button id="PREV"  onclick="prevFrame()"  ><i class="fas fa-step-backward"></i></button>
+          <button id="PREVIEW" onclick="playVideo()"><i class="fas fa-play"></i></button>
+          <button id="NEXT"  onclick="nextFrame()"  ><i class="fas fa-step-forward"></i></button>
+        </div>
+      </div>
+
+      <div id="card">
+        <div id="STATUS">
+          <div id='STATUS-HEALTH'></div>
+          <div id='STATUS-LOADING'></div>
+          <div id='STATUS-TEXT'>
+            <div>UNPROCESSED</div>
+            <div>PENDING</div>
+            <div>VERIFIED</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="little-card">
+        <div id='card-submit-controls'>
+          <button id="SUBMIT" onclick="submitVideo()">VERIFY</button>
+        </div>
       </div>
     </div>
 

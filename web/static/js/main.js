@@ -3,13 +3,15 @@ let SELECTOR      = new Selector();
 let FRAMES        = [];
 let CURRENT_FRAME = -1;
 let TOTAL_FRAME   = 0;
-let PLAY          = false;
+let PREVIEW       = false;
+let STATUS        = 0;
 
 let IMAGE_W       = 1080;
 let IMAGE_H       = null;
 let IMAGE_SCALE   = null;
 
 function setFrame() {
+  updateButtons();
   let json = getFrame(CURRENT_FRAME);
 
   IMAGE_SCALE = IMAGE_W / json.width;
@@ -45,6 +47,8 @@ function nextFrame() {
   SELECTOR.reset();
   updateButtons();
 
+  if(STATUS == 0 && FRAMES.length > 0) updateStatus(STATUS + 1);
+
   setFrame();
 }
 
@@ -55,6 +59,8 @@ function prevFrame() {
   CURRENT_FRAME--;
   updateButtons();
 
+  if(STATUS == 0 && FRAMES.length > 0) updateStatus(STATUS + 1);
+
   setFrame();
 }
 
@@ -64,15 +70,17 @@ function firstFrame() {
   if(FRAMES.length > 0) postFrame(FRAMES[CURRENT_FRAME], CURRENT_FRAME);
   CURRENT_FRAME = 0;
   updateButtons();
+
+  if(STATUS == 0 && FRAMES.length > 0) updateStatus(STATUS + 1);
 }
 
-function playFrame() {
-  PLAY = true;
+function playVideo() {
+  PREVIEW = true;
   updateButtons();
 }
 
-function stopFrame() {
-  PLAY = false;
+function stopVideo() {
+  PREVIEW = false;
   updateButtons();
 }
 
@@ -82,17 +90,51 @@ function addPanda() {
   updateButtons();
 
   FRAMES[CURRENT_FRAME].changed = true;
+
+  if(STATUS == 0 && FRAMES.length > 0) updateStatus(STATUS + 1);
+  updateButtons();
+
+  return skeleton;
+}
+
+function updateStatus(status) {
+  STATUS = status;
+  setStatus(status);
+
+  $( '#STATUS-HEALTH' ).css('background-color',
+    (status == 0) ? 'var(--unprocessed)' :
+    (status == 1) ? 'var(--pending)' :
+    'var(--processed)'
+  );
+  $( '#STATUS-HEALTH' ).css('width',
+    (status == 0) ? '33.33%' :
+    (status == 1) ? '66.66%' :
+    '100%'
+  );
+}
+
+function submitVideo() {
+  let status = getStatus().status;
+  if(status < 2) status++;
+  updateStatus(status);
+
+  updateButtons();
+  backToList();
+}
+
+function backToList() {
+  location.href = '/';
 }
 
 function updateButtons() {
-  $( '#PLAY' ).html(PLAY ? '<i class="fas fa-stop"></i>': '<i class="fas fa-play"></i>');
-  $( '#PLAY' ).attr('onclick', PLAY ? 'javascript: stopFrame()': 'javascript: playFrame()');
-  $( '#PLAY' ).prop('disabled', (CURRENT_FRAME == TOTAL_FRAME - 1));
+  $( '#NEXT' ).prop('disabled', (CURRENT_FRAME == TOTAL_FRAME - 1 || PREVIEW));
+  $( '#PREV' ).prop('disabled', (CURRENT_FRAME <= 0 || PREVIEW));
 
-  $( '#NEXT' ).prop('disabled', (CURRENT_FRAME == TOTAL_FRAME - 1 || PLAY));
-  $( '#PREV' ).prop('disabled', (CURRENT_FRAME == 0 || PLAY));
+  $( '#FIRST' ).prop('disabled', (CURRENT_FRAME <= 0 || PREVIEW));
 
-  $( '#FIRST' ).prop('disabled', (CURRENT_FRAME == 0 || PLAY));
+  $( '#ADD' ).prop('disabled', (PREVIEW));
 
-  $( '#ADD' ).prop('disabled', PLAY);
+  $( '#BACK' ).prop('disabled', (PREVIEW));
+  $( '#SUBMIT' ).prop('disabled', (FRAMES.length <= 0 || PREVIEW || STATUS != 1));
+  $( '#PREVIEW' ).prop('disabled', (FRAMES.length <= 0 || CURRENT_FRAME >= TOTAL_FRAME - 1 || PREVIEW));
 }

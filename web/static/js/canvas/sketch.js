@@ -3,6 +3,9 @@ let MOUSE = null;
 function preload() {
   nextFrame();
   MOUSE = new Vector2D(mouseX, mouseY);
+
+  updateStatus(getStatus().status);
+  updateButtons();
 }
 
 function setup() {
@@ -13,19 +16,25 @@ function setup() {
 }
 
 function mouseWheel(event) {
-  if(PLAY == true) return;
+  if(PREVIEW == true) return;
 
   SELECTOR.wheel(event.delta > 0 ? 1.2 : 1 / 1.2, event.delta > 0 ? 1 : -1);
 }
 
 function mousePressed() {
-  if(PLAY == true) return;
+  if(PREVIEW == true) return;
 
   SELECTOR.click();
 }
 
+function mouseReleased() {
+  if(PREVIEW == true) return;
+
+  SELECTOR.release();
+}
+
 function keyPressed() {
-  if(PLAY == true) return;
+  if(PREVIEW == true) return;
 
   if(keyCode == LEFT_ARROW || keyCode == RIGHT_ARROW) SELECTOR.key('FLIP_V');
   if(keyCode == UP_ARROW   || keyCode == DOWN_ARROW)  SELECTOR.key('FLIP_H');
@@ -45,9 +54,9 @@ function drawFrameInfo() {
 }
 
 function draw() {
-  if(PLAY){
-    if(CURRENT_FRAME < TOTAL_FRAME - 1) nextFrame();
-    else stopFrame();
+  if(PREVIEW) {
+    if(CURRENT_FRAME < FRAMES.length - 1) CURRENT_FRAME++;
+    else stopVideo();
   }
 
   let mouse   = new Vector2D(mouseX, mouseY);

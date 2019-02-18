@@ -36,3 +36,26 @@ function getVideoList() {
 
   return json;
 }
+
+function getStatus() {
+  let url  = 'status';
+
+  let json = null;
+  $.ajaxSetup({async: false});
+  $.get(url, function(data){
+    json = JSON.parse(JSON.stringify(data, null, 4));
+  });
+
+  return json;
+}
+
+function setStatus(status) {
+  $.ajaxSetup({async: false});
+  $.ajax({
+    type       : 'POST',
+    url        : 'status',
+    data       : JSON.stringify({ 'status': status }, null, 4),
+    contentType: "application/json",
+    dataType   : 'json'
+  });
+}

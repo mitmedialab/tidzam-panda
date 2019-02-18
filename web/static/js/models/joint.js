@@ -42,10 +42,15 @@ class Joint {
     );
   }
 
+  switchState() {
+    this.state = (this.state == JOINT_STATES['UNLABELED']) ? JOINT_STATES['LABELED_VISIBLE'] :
+                 JOINT_STATES['UNLABELED'];
+  }
+
   drawLabel() {
     if(this.selected || this.hover) {
       strokeWeight(TEXT_STROKE_WEIGHT);
-      stroke(JOINT_COLORS[SKELETON[this.label]]);
+      stroke(this.col);
       fill(255, 255, 255);
       textSize(TEXT_SIZE);
       textAlign(CENTER, CENTER);
@@ -58,7 +63,10 @@ class Joint {
 
     strokeWeight(JOINT_STROKE_WEIGHT);
     stroke(col);
-    fill(col);
+
+    if(this.state == JOINT_STATES['LABELED_VISIBLE']) fill(col);
+    else noFill();
+
     ellipse(this.pos.x, this.pos.y, (this.hover? 1.2: 1) * JOINT_RADIUS * 2);
   }
 
