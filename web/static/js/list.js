@@ -10,7 +10,7 @@ function setVideoButton(video) {
   button    += '<div id="card-list-id">' + video._id + '</div>';
   button    += '<div id="card-list-size">' + video.width + 'x' + video.height + '</div>';
   button    += '<div id="card-list-path">' + video.path + '</div>';
-  button    += '<button id="card-list-link" href="/video/' + video._id + '/" onclick="redirect(this.getAttribute(\'href\'))">GO</button>';
+  button    += '<button id="card-list-link" href="video/' + video._id + '/" onclick="redirect(this.getAttribute(\'href\'))">GO</button>';
   button    += '</div>';
 
   document.getElementById('card-list').insertAdjacentHTML('beforeend', button);

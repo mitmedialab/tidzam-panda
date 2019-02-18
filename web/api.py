@@ -104,54 +104,55 @@ def load_skeleton(next_frame):
             return { **next_frame, **frame_canvas }
 
     # If there is no previous canvas on the video, we leave
-    if len(prev_frame_canvas) == 0:
-        return next_frame
+    if prev_frame_canvas is not None:
+        if len(prev_frame_canvas) == 0:
+            return next_frame
 
-    if len(prev_frame_canvas['skeletons']) == 0:
-        return next_frame
+        if len(prev_frame_canvas['skeletons']) == 0:
+            return next_frame
 
-    # OpenCV Extrapolation
-    prev_frame = prepare_frame(next_frame['video_id'], prev_frame_canvas['frame_id'])
-    pts        = []
-    for skeleton in [skeleton for skeleton in prev_frame_canvas['skeletons']]:
+        # OpenCV Extrapolation
+        prev_frame = prepare_frame(next_frame['video_id'], prev_frame_canvas['frame_id'])
+        pts        = []
+        for skeleton in [skeleton for skeleton in prev_frame_canvas['skeletons']]:
 
-        if frame_canvas:
-            skeleton_already_present = False
-            for sk in frame_canvas["skeletons"]:
-                if skeleton["id"] == sk["id"]:
-                    skeleton_already_present = True
-            if skeleton_already_present:
-                continue
+            if frame_canvas:
+                skeleton_already_present = False
+                for sk in frame_canvas["skeletons"]:
+                    if skeleton["id"] == sk["id"]:
+                        skeleton_already_present = True
+                if skeleton_already_present:
+                    continue
 
-        for pt in skeleton['keypoints']:
-            pts.append(tuple(skeleton['keypoints'][pt]))
+            for pt in skeleton['keypoints']:
+                pts.append(tuple(skeleton['keypoints'][pt]))
 
-    prev_frame_gray = cv2.cvtColor(prev_frame['img'], cv2.COLOR_BGR2GRAY)
-    next_frame_gray = cv2.cvtColor(next_frame['img'], cv2.COLOR_BGR2GRAY)
+        prev_frame_gray = cv2.cvtColor(prev_frame['img'], cv2.COLOR_BGR2GRAY)
+        next_frame_gray = cv2.cvtColor(next_frame['img'], cv2.COLOR_BGR2GRAY)
 
-    pts_data = np.array(pts)[:, :2].astype(np.float32)
+        pts_data = np.array(pts)[:, :2].astype(np.float32)
 
-    pts1, st, err = cv2.calcOpticalFlowPyrLK(
-        prevImg  = prev_frame_gray,
-        nextImg  = next_frame_gray,
-        prevPts  = pts_data,
-        nextPts  = None,
-        winSize  = (15, 15),
-        maxLevel = 2,
-        criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03)
-    )
+        pts1, st, err = cv2.calcOpticalFlowPyrLK(
+            prevImg  = prev_frame_gray,
+            nextImg  = next_frame_gray,
+            prevPts  = pts_data,
+            nextPts  = None,
+            winSize  = (15, 15),
+            maxLevel = 2,
+            criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03)
+        )
 
-    i                       = 0
-    next_frame['skeletons'] = []
-    for skeleton in [skeleton['keypoints'] for skeleton in prev_frame_canvas['skeletons']]:
-        sk = {}
+        i                       = 0
+        next_frame['skeletons'] = []
+        for skeleton in [skeleton['keypoints'] for skeleton in prev_frame_canvas['skeletons']]:
+            sk = {}
 
-        for pt in skeleton:
-            point  = pts1[i].tolist()
-            sk[pt] = [point[0], point[1], pts[i][2]]
-            i     += 1
+            for pt in skeleton:
+                point  = pts1[i].tolist()
+                sk[pt] = [point[0], point[1], pts[i][2]]
+                i     += 1
 
-        next_frame['skeletons'].append({'keypoints': sk})
+            next_frame['skeletons'].append({'keypoints': sk})
 
     return next_frame
 
