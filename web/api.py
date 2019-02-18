@@ -45,9 +45,10 @@ def load_videos():
             _, img = video_cap.read()
 
             mongo.db.videos.insert({
-                'path'  :path,
-                'width' :img.shape[1],
-                'height':img.shape[0]
+                'path'  : path,
+                'width' : img.shape[1],
+                'height': img.shape[0],
+                'status': 0
             })
 
     print()
@@ -181,7 +182,9 @@ def get_videos():
 def set_video_status(video_id):
     res = mongo.db.videos.update_one(
         {'_id' : ObjectId(video_id)},
-        {'$set': {'status': str(request.data, 'utf-8')}}
+        {'$set': {
+            'status': int(json.loads(str(request.data, 'utf-8'))['status'])
+        }}
     )
     return jsonify({})
 
