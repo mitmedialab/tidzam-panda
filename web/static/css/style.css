@@ -149,6 +149,25 @@ button:active {
   grid-gap: 0px;
 }
 
+#card-header {
+  position: relative;
+  display: grid;
+
+  padding: 0px;
+  margin: 0px;
+
+  grid-template-columns: 2fr 1fr 2fr 2fr;
+  grid-column-gap: 10px;
+  grid-row-gap: 0px;
+
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  color: white;
+  background-color: var(--dark-grey);
+}
+
 #card-list-link {
   background-color: var(--blue);
 }
