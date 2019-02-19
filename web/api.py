@@ -90,11 +90,24 @@ def load_skeleton(next_frame):
         'frame_id': next_frame['frame_id']
     })
 
-    prev_frame_canvas = mongo.db.frameCanvas.find_one({
-        'video_id': next_frame['video_id'],
-        'frame_id': (next_frame['frame_id'] - 1)
-    })
+    prev_frame_canvas = mongo.db.frameCanvas.find({
+        'video_id': next_frame['video_id'] #,
+        #'frame_id': (next_frame['frame_id'] - 1)
+    }).sort("frame_id",-1)
 
+    # Load the first available previous frame which has a skeleton
+    found = False
+    for c in prev_frame_canvas:
+        if(c["frame_id"] == next_frame['frame_id'] ):
+            found = True
+        if found and len(c["skeletons"]) > 0:
+            break
+    try:
+        prev_frame_canvas = c
+    except:
+        prev_frame_canvas = None
+
+    # If their is already an entry for this frame
     if frame_canvas is not None:
         del frame_canvas['_id']
 
@@ -115,7 +128,7 @@ def load_skeleton(next_frame):
         # OpenCV Extrapolation
         prev_frame = prepare_frame(next_frame['video_id'], prev_frame_canvas['frame_id'])
         pts        = []
-        for skeleton in [skeleton for skeleton in prev_frame_canvas['skeletons']]:
+        for skeleton in prev_frame_canvas['skeletons']:
 
             if frame_canvas:
                 skeleton_already_present = False
