@@ -44,7 +44,7 @@ function next() {
 
   if(fpc > 1) {
     let nb_frames = Math.min(fpc, (TOTAL_FRAME - 1) - CURRENT_FRAME);
-    for(let i = 0; i < nb_frames; i++) nextFrame(i == 0, i != 0 && i != (nb_frames - 1));
+    for(let i = 0; i < nb_frames; i++) nextFrame(i == 0, i != (nb_frames - 1));
   }
   else nextFrame();
 }
@@ -54,7 +54,7 @@ function prev() {
 
   if(fpc > 1) {
     let nb_frames = Math.min(fpc, CURRENT_FRAME);
-    for(let i = 0; i < nb_frames; i++) prevFrame(i == 0, i != 0);
+    for(let i = 0; i < nb_frames; i++) prevFrame(i == 0, i != (nb_frames - 1));
   }
   else prevFrame();
 }
