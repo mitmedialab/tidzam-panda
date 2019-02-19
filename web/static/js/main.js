@@ -44,24 +44,22 @@ function next() {
 
   if(fps > 1) {
     let nb_frames = Math.min(fps, (TOTAL_FRAME - 1) - CURRENT_FRAME);
-    console.log(CURRENT_FRAME, fps, nb_frames);
-    for(let i = 0; i < nb_frames; i++) nextFrame(i == 0);
+    for(let i = 0; i < nb_frames; i++) nextFrame(i == 0, i != 0 && i != (nb_frames - 1));
   }
-  else nextFrame(true);
+  else nextFrame();
 }
 
 function prev() {
   let fps = parseInt($( '#FPS' ).val());
 
   if(fps > 1) {
-    let nb_frames = Math.max(CURRENT_FRAME - fps, CURRENT_FRAME);
-    console.log(CURRENT_FRAME, fps, nb_frames);
-    for(let i = 0; i < nb_frames; i++) prevFrame(i == 0);
+    let nb_frames = Math.min(fps, CURRENT_FRAME);
+    for(let i = 0; i < nb_frames; i++) prevFrame(i == 0, i != 0);
   }
-  else prevFrame(true);
+  else prevFrame();
 }
 
-function nextFrame(do_post=true) {
+function nextFrame(do_post=true, fake_frame=false) {
   if(CURRENT_FRAME != -1 && CURRENT_FRAME == TOTAL_FRAME - 1) return;
   if(FRAMES.length > 0 && do_post) postFrame(FRAMES[CURRENT_FRAME], CURRENT_FRAME);
 
@@ -71,10 +69,15 @@ function nextFrame(do_post=true) {
 
   if(STATUS == 0 && FRAMES.length > 0) updateStatus(STATUS + 1);
 
-  setFrame();
+  if(!fake_frame) setFrame();
+  else {
+    let frame = FRAMES[CURRENT_FRAME];
+    if(!frame) FRAMES.push(new Frame(FRAMES[CURRENT_FRAME - 1].img));
+    updateButtons();
+  }
 }
 
-function prevFrame(do_post=true) {
+function prevFrame(do_post=true, fake_frame=false) {
   if(CURRENT_FRAME == 0) return;
 
   if(do_post) postFrame(FRAMES[CURRENT_FRAME], CURRENT_FRAME);
@@ -83,7 +86,8 @@ function prevFrame(do_post=true) {
 
   if(STATUS == 0 && FRAMES.length > 0) updateStatus(STATUS + 1);
 
-  setFrame();
+  if(!fake_frame) setFrame();
+  else updateButtons();
 }
 
 function firstFrame() {
@@ -164,4 +168,6 @@ function updateButtons() {
   $( '#BACK' ).prop('disabled', (PREVIEW));
   $( '#SUBMIT' ).prop('disabled', (FRAMES.length <= 0 || PREVIEW || STATUS != 1));
   $( '#PREVIEW' ).prop('disabled', (FRAMES.length <= 0 || CURRENT_FRAME >= TOTAL_FRAME - 1 || PREVIEW));
+
+  $( '#FPS' ).prop('disabled', (PREVIEW));
 }

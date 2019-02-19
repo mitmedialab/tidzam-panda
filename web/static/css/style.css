@@ -157,14 +157,14 @@ button:active {
   cursor: default;
 }
 
-#PREVIEW {
+#PREVIEW, #FPS {
   background-color: var(--blue);
 }
-#PREVIEW:hover {
+#PREVIEW:hover, #FPS:hover {
   background-color: var(--blue-dark);
 }
-#PREVIEW:disabled,
-#PREVIEW[disabled] {
+#PREVIEW:disabled,  #FPS:disabled,
+#PREVIEW[disabled], #FPS[disabled] {
   background-color: var(--blue-light);
   cursor: default;
 }
@@ -402,10 +402,5 @@ button:active {
   padding: 0px 15px;
 
   color: white;
-  background-color: var(--blue);
-
   transition: 0.2s;
-}
-#FPS:hover {
-  background-color: var(--blue-dark);
 }
