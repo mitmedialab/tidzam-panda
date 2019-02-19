@@ -102,20 +102,22 @@ class Selector {
     let skeletons = this.frame.skeletons;
     if(skeletons == null) return;
 
+    this.joint_hovered = null;
+    for(let skeleton of skeletons) {
+      for(let label of Object.keys(SKELETON)) {
+        let joint = skeleton.joints[label];
+        if(joint == null) continue;
+
+        if(joint.isHover(mouse))
+          this.joint_hovered = joint;
+      }
+    }
+
+    if(this.joint_hovered != null) return;
+
     this.skeleton_hovered = null;
     for(let skeleton of skeletons)
-      if(skeleton.isHover(mouse))
-        this.skeleton_hovered = skeleton;
-
-    if(this.skeleton_hovered == null) return;
-
-    this.joint_hovered = null;
-    for(let label of Object.keys(SKELETON)) {
-      let joint = this.skeleton_hovered.joints[label];
-      if(joint == null) continue;
-
-      if(joint.isHover(mouse))
-        this.joint_hovered = joint;
-    }
+    if(skeleton.isHover(mouse))
+    this.skeleton_hovered = skeleton;
   }
 }
