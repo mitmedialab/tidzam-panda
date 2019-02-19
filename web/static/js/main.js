@@ -126,6 +126,11 @@ function backToList() {
   location.href = '/';
 }
 
+function incrementAction(skeleton) {
+  skeleton.action++;
+  if(skeleton.action >= Object.keys(ACTIONS).length) skeleton.action = 0;
+}
+
 function updateButtons() {
   $( '#NEXT' ).prop('disabled', (CURRENT_FRAME == TOTAL_FRAME - 1 || PREVIEW));
   $( '#PREV' ).prop('disabled', (CURRENT_FRAME <= 0 || PREVIEW));

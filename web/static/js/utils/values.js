@@ -109,3 +109,11 @@ const JOINT_PAIRS                   = {
 
 const TEXT_SIZE          = 16;
 const TEXT_STROKE_WEIGHT = 2;
+
+const ACTIONS = {
+  'WALKING' : 0,
+  'PLAYING' : 1,
+  'SLEEPING': 2,
+  'EATING'  : 3,
+  'NURSING' : 4
+};

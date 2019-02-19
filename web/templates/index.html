@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="icon" type="image/png" href="/panda/static/assets/favicon.png">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
 
     <title>Panda Pose Estimation Tool</title>
 
@@ -15,19 +15,20 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.dom.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.sound.js"></script>
 
-    <script type="text/javascript" src="/panda/static/js/api/call.js"></script>
+    <script type="text/javascript" src="js/api/call.js"></script>
 
-    <link rel="stylesheet" href="/panda/static/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   </head>
-  <body>
+  <body id="list-body">
 
     <div id="card">
       <div id="card-search"></div>
-      <div id="card-header"><div>Id</div><div>Resolution</div><div>Name</div><div>Status</div><div>Link</div></div>
+      <div id="card-progression"><div id="card-progression-health"></div><div id="card-progression-text">0.00%</div></div>
+      <div id="card-header"><div>Id</div><div>Resolution</div><div>Name</div><div id='status-button' onclick='sortStatus()'>Status</div><div>Link</div></div>
       <div id="card-list"></div>
     </div>
 
-    <script type="text/javascript" src="/panda/static/js/list.js"></script>
+    <script type="text/javascript" src="js/list.js"></script>
   </body>
 </html>

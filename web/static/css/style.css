@@ -25,7 +25,20 @@
   --verified: #cddc39;
 }
 
-body {
+#list-body {
+  position: relative;
+  width: 100%;
+
+  padding: 0px;
+  margin: auto;
+
+  text-align: center;
+  font-family: 'Open Sans',sans-serif;
+
+  background: var(--light-grey);
+}
+
+#video-body {
   position: relative;
   width: 100vw;
   height: 100vh;
@@ -56,6 +69,13 @@ body {
   overflow: hidden;
 
   background: white;
+  transition: 0.2s;
+
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#list-body #card {
+  width: 80%;
 }
 
 #card-canvas, #canvas {
@@ -306,6 +326,42 @@ button:active {
   border-right:10px solid blue;
 }
 
+#card-progression {
+  position: relative;
+  width: 100%;
+  height: 20px;
+
+  animation: loading .5s linear infinite;
+  background-image: repeating-linear-gradient(-45deg, #00000022, #00000022 11px, #00000000 10px, #00000000 20px);
+}
+#card-progression-health {
+  position: relative;
+  top: 0px;
+  left: 0px;
+
+  height: 100%;
+  width: 0%;
+
+  background-color: var(--verified);
+  transition: 0.2s;
+}
+#card-progression-text {
+  position: absolute;
+  top: 0px;
+
+  width: 100%;
+  height: 100%;
+
+  display: grid;
+  grid-template-columns: 1fr;
+
+  justify-content: center;
+  align-items: center;
+
+  font-size: 12px;
+  color: var(--dark-grey);
+}
+
 #BACK {
   position: absolute;
   left: 0px;
@@ -324,4 +380,13 @@ button:active {
   overflow: hidden;
 
   background: white;
+}
+
+#status-button {
+  padding: 0px 10px;
+  transition: 0.2s;
+  cursor: pointer;
+}
+#status-button:hover {
+  background-color: var(--grey);
 }

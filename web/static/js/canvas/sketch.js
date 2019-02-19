@@ -38,7 +38,8 @@ function keyPressed() {
 
   if(keyCode == LEFT_ARROW || keyCode == RIGHT_ARROW) SELECTOR.key('FLIP_V');
   if(keyCode == UP_ARROW   || keyCode == DOWN_ARROW)  SELECTOR.key('FLIP_H');
-  if(keyCode == DELETE     || keyCode == BACKSPACE)   SELECTOR.key('DELETE')
+  if(keyCode == DELETE     || keyCode == BACKSPACE)   SELECTOR.key('DELETE');
+  if(keyCode == 32)                                   SELECTOR.key('ACTION');
 }
 
 function drawFrameInfo() {

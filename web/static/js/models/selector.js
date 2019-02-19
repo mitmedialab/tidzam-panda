@@ -80,6 +80,9 @@ class Selector {
           this.joint.switchState();
         }
         break;
+      case 'ACTION':
+        if(this.skeleton != null) incrementAction(this.skeleton);
+        break;
     }
   }
 

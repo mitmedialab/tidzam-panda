@@ -10,6 +10,8 @@ class Skeleton {
 
     this.scale_n  = 0;
 
+    this.action   = ACTIONS['WALKING'];
+
     this.resetJoints();
   }
 
@@ -19,7 +21,8 @@ class Skeleton {
 
   toJSON() {
     let json = {
-      'id' : this.id
+      'id'    : this.id,
+      'action': this.action
     };
 
     let skeleton = {};
@@ -110,8 +113,8 @@ class Skeleton {
       joint_b = joint_b.copy();
 
       this.joints[a]       = joint_b;
-      this.joints[a].color = color(JOINT_COLORS[SKELETON[b]]);
       this.joints[a].label = a;
+      this.joints[a].col   = color(JOINT_COLORS[SKELETON[a]]);
 
       this.joints[b] = null;
       return;
@@ -121,8 +124,8 @@ class Skeleton {
       joint_a = joint_a.copy();
 
       this.joints[b]       = joint_a;
-      this.joints[b].color = color(JOINT_COLORS[SKELETON[a]]);
       this.joints[b].label = b;
+      this.joints[b].col   = color(JOINT_COLORS[SKELETON[b]]);
 
       this.joints[a] = null;
       return;
@@ -132,12 +135,12 @@ class Skeleton {
     joint_b = joint_b.copy();
 
     this.joints[a]       = joint_b;
-    this.joints[a].color = color(JOINT_COLORS[SKELETON[b]]);
     this.joints[a].label = a;
+    this.joints[a].col   = color(JOINT_COLORS[SKELETON[a]]);
 
     this.joints[b]       = joint_a;
-    this.joints[b].color = color(JOINT_COLORS[SKELETON[a]]);
     this.joints[b].label = b;
+    this.joints[b].col   = color(JOINT_COLORS[SKELETON[b]]);
   }
 
   flipVertical() {
@@ -322,6 +325,24 @@ class Skeleton {
 
       joint.drawLabel();
     }
+
+    let bounds = this.getBounds();
+    let center = this.getBarycenter();
+
+    strokeWeight(TEXT_STROKE_WEIGHT);
+    stroke(0, 0, 0, this.hover ? ALPHA_SELECTED: ALPHA_UNSELECTED);
+    fill(255, 255, 255, this.hover ? ALPHA_SELECTED: ALPHA_UNSELECTED);
+    textSize(TEXT_SIZE);
+    textAlign(CENTER, CENTER);
+
+    let label_pos = new Vector2D();
+    label_pos.x   = bounds.min[0] + (bounds.max[0] - bounds.min[0]) * 0.5;
+    label_pos.y   = (center.y < height * 0.5) ? bounds.min[1] - TEXT_SIZE * 1.5:
+                    bounds.max[1] + TEXT_SIZE * 1.5;
+
+    text(Object.keys(ACTIONS).find(key => ACTIONS[key] == this.action),
+      label_pos.x, label_pos.y
+    );
   }
 
   draw() {
