@@ -93,7 +93,7 @@
   position: relative;
   display: grid;
 
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
 
   margin: auto;
   padding: 0px;
@@ -389,4 +389,23 @@ button:active {
 }
 #status-button:hover {
   background-color: var(--grey);
+}
+
+#FPS {
+  font-family: 'Open Sans',sans-serif;
+  font-size: 25px;
+  font-weight: bold;
+
+  border: none;
+  cursor: pointer;
+
+  padding: 0px 15px;
+
+  color: white;
+  background-color: var(--blue);
+
+  transition: 0.2s;
+}
+#FPS:hover {
+  background-color: var(--blue-dark);
 }

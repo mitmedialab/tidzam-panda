@@ -45,9 +45,15 @@
 
         <div id='card-controls'>
           <button id="FIRST" onclick="firstFrame()" ><i class="fas fa-fast-backward"></i></button>
-          <button id="PREV"  onclick="prevFrame()"  ><i class="fas fa-step-backward"></i></button>
+          <button id="PREV"  onclick="prev()"  ><i class="fas fa-step-backward"></i></button>
           <button id="PREVIEW" onclick="playVideo()"><i class="fas fa-play"></i></button>
-          <button id="NEXT"  onclick="nextFrame()"  ><i class="fas fa-step-forward"></i></button>
+          <select id="FPS">
+            <option value="1" selected>1 FPS</option>
+            <option value="24"        >24 FPS</option>
+            <option value="96"        >96 FPS</option>
+            <option value="120"       >120 FPS</option>
+          </select>
+          <button id="NEXT"  onclick="next()"  ><i class="fas fa-step-forward"></i></button>
         </div>
       </div>
 

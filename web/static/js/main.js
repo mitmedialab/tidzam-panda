@@ -39,9 +39,31 @@ function setFrame() {
   }
 }
 
-function nextFrame() {
+function next() {
+  let fps = parseInt($( '#FPS' ).val());
+
+  if(fps > 1) {
+    let nb_frames = Math.min(fps, (TOTAL_FRAME - 1) - CURRENT_FRAME);
+    console.log(CURRENT_FRAME, fps, nb_frames);
+    for(let i = 0; i < nb_frames; i++) nextFrame(i == 0);
+  }
+  else nextFrame(true);
+}
+
+function prev() {
+  let fps = parseInt($( '#FPS' ).val());
+
+  if(fps > 1) {
+    let nb_frames = Math.max(CURRENT_FRAME - fps, CURRENT_FRAME);
+    console.log(CURRENT_FRAME, fps, nb_frames);
+    for(let i = 0; i < nb_frames; i++) prevFrame(i == 0);
+  }
+  else prevFrame(true);
+}
+
+function nextFrame(do_post=true) {
   if(CURRENT_FRAME != -1 && CURRENT_FRAME == TOTAL_FRAME - 1) return;
-  if(FRAMES.length > 0) postFrame(FRAMES[CURRENT_FRAME], CURRENT_FRAME);
+  if(FRAMES.length > 0 && do_post) postFrame(FRAMES[CURRENT_FRAME], CURRENT_FRAME);
 
   CURRENT_FRAME++;
   SELECTOR.reset();
@@ -52,10 +74,10 @@ function nextFrame() {
   setFrame();
 }
 
-function prevFrame() {
+function prevFrame(do_post=true) {
   if(CURRENT_FRAME == 0) return;
 
-  postFrame(FRAMES[CURRENT_FRAME], CURRENT_FRAME);
+  if(do_post) postFrame(FRAMES[CURRENT_FRAME], CURRENT_FRAME);
   CURRENT_FRAME--;
   updateButtons();
 
@@ -104,7 +126,7 @@ function updateStatus(status) {
   $( '#STATUS-HEALTH' ).css('background-color',
     (status == 0) ? 'var(--unprocessed)' :
     (status == 1) ? 'var(--pending)' :
-    'var(--processed)'
+    'var(--verified)'
   );
   $( '#STATUS-HEALTH' ).css('width',
     (status == 0) ? '33.33%' :
