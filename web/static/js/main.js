@@ -123,7 +123,7 @@ function submitVideo() {
 }
 
 function backToList() {
-  location.href = '/';
+  location.href = '/panda';
 }
 
 function incrementAction(skeleton) {

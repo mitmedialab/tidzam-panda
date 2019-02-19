@@ -115,5 +115,6 @@ const ACTIONS = {
   'PLAYING' : 1,
   'SLEEPING': 2,
   'EATING'  : 3,
-  'NURSING' : 4
+  'NURSING' : 4,
+  'RESTING' : 5
 };
