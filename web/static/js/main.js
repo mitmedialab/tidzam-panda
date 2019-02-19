@@ -40,20 +40,20 @@ function setFrame() {
 }
 
 function next() {
-  let fps = parseInt($( '#FPS' ).val());
+  let fpc = parseInt($( '#FPC' ).val());
 
-  if(fps > 1) {
-    let nb_frames = Math.min(fps, (TOTAL_FRAME - 1) - CURRENT_FRAME);
+  if(fpc > 1) {
+    let nb_frames = Math.min(fpc, (TOTAL_FRAME - 1) - CURRENT_FRAME);
     for(let i = 0; i < nb_frames; i++) nextFrame(i == 0, i != 0 && i != (nb_frames - 1));
   }
   else nextFrame();
 }
 
 function prev() {
-  let fps = parseInt($( '#FPS' ).val());
+  let fpc = parseInt($( '#FPC' ).val());
 
-  if(fps > 1) {
-    let nb_frames = Math.min(fps, CURRENT_FRAME);
+  if(fpc > 1) {
+    let nb_frames = Math.min(fpc, CURRENT_FRAME);
     for(let i = 0; i < nb_frames; i++) prevFrame(i == 0, i != 0);
   }
   else prevFrame();
@@ -169,5 +169,5 @@ function updateButtons() {
   $( '#SUBMIT' ).prop('disabled', (FRAMES.length <= 0 || PREVIEW || STATUS != 1));
   $( '#PREVIEW' ).prop('disabled', (FRAMES.length <= 0 || CURRENT_FRAME >= TOTAL_FRAME - 1 || PREVIEW));
 
-  $( '#FPS' ).prop('disabled', (PREVIEW));
+  $( '#FPC' ).prop('disabled', (PREVIEW));
 }

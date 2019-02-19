@@ -157,14 +157,14 @@ button:active {
   cursor: default;
 }
 
-#PREVIEW, #FPS {
+#PREVIEW, #FPC {
   background-color: var(--blue);
 }
-#PREVIEW:hover, #FPS:hover {
+#PREVIEW:hover, #FPC:hover {
   background-color: var(--blue-dark);
 }
-#PREVIEW:disabled,  #FPS:disabled,
-#PREVIEW[disabled], #FPS[disabled] {
+#PREVIEW:disabled,  #FPC:disabled,
+#PREVIEW[disabled], #FPC[disabled] {
   background-color: var(--blue-light);
   cursor: default;
 }
@@ -391,7 +391,7 @@ button:active {
   background-color: var(--grey);
 }
 
-#FPS {
+#FPC {
   font-family: 'Open Sans',sans-serif;
   font-size: 25px;
   font-weight: bold;
