@@ -6,30 +6,6 @@ let SORT_STATUS  = -1;
 
 setVideoButtons();
 
-function sortStatus() {
-  SORT_STATUS++;
-  if(SORT_STATUS > 2) SORT_STATUS = -1;
-
-  switch (SORT_STATUS) {
-    case -1:
-      setVideoButtons();
-      $( '#status-button' ).html('Status');
-      break;
-    case 0:
-      setVideoButtons(0);
-      $( '#status-button' ).html('Status:unprocessed');
-      break;
-    case 1:
-      setVideoButtons(1);
-      $( '#status-button' ).html('Status:pending');
-      break;
-    case 2:
-      setVideoButtons(2);
-      $( '#status-button' ).html('Status:verified');
-      break;
-  }
-}
-
 function redirect(href) {
   location.href = href;
 }
@@ -67,12 +43,12 @@ function setVideoButton(video) {
   document.getElementById('card-list').insertAdjacentHTML('beforeend', button);
 }
 
-function setVideoButtons(status=null) {
+function setVideoButtons(status='all') {
   $( '#card-list' ).empty();
 
   let videos   = getVideoList();
   TOTAL_VIDEOS = videos.length;
-  VIDEOS       = (status != null) ? videos.filter(e => e.status == status): videos;
+  VIDEOS       = (status != 'all') ? videos.filter(e => e.status == parseInt(status)): videos;
   DONE         = videos.filter(e => e.status == 2).length;
 
   let perc = Math.round(DONE / TOTAL_VIDEOS * 100);

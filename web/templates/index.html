@@ -25,7 +25,18 @@
     <div id="card">
       <div id="card-search"></div>
       <div id="card-progression"><div id="card-progression-health"></div><div id="card-progression-text">0.00%</div></div>
-      <div id="card-header"><div>Id</div><div>Resolution</div><div>Name</div><div id='status-button' onclick='sortStatus()'>Status</div><div>Link</div></div>
+      <div id="card-header">
+        <div>Id</div>
+        <div>Resolution</div>
+        <div>Name</div>
+        <select id='status-button' onChange="setVideoButtons(this.value)">
+          <option value="all">ALL</option>
+          <option value="0"  >UNPROCESSED</option>
+          <option value="1"  >PENDING</option>
+          <option value="2"  >VERIFIED</option>
+        </select>
+        <div>Link</div>
+      </div>
       <div id="card-list"></div>
     </div>
 

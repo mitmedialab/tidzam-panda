@@ -157,14 +157,14 @@ button:active {
   cursor: default;
 }
 
-#PREVIEW, #FPC {
+#PREVIEW, #FPC, #status-button {
   background-color: var(--blue);
 }
-#PREVIEW:hover, #FPC:hover {
+#PREVIEW:hover, #FPC:hover, #status-button:hover {
   background-color: var(--blue-dark);
 }
-#PREVIEW:disabled,  #FPC:disabled,
-#PREVIEW[disabled], #FPC[disabled] {
+#PREVIEW:disabled,  #FPC:disabled,  #status-button:disabled,
+#PREVIEW[disabled], #FPC[disabled], #status-button[disabled] {
   background-color: var(--blue-light);
   cursor: default;
 }
@@ -382,16 +382,7 @@ button:active {
   background: white;
 }
 
-#status-button {
-  padding: 0px 10px;
-  transition: 0.2s;
-  cursor: pointer;
-}
-#status-button:hover {
-  background-color: var(--grey);
-}
-
-#FPC {
+#FPC, #status-button {
   font-family: 'Open Sans',sans-serif;
   font-size: 25px;
   font-weight: bold;
