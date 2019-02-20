@@ -35,6 +35,9 @@ function setFrame() {
       let j     = s.addJoint(label);
       j.pos     = new Vector2D(joint[0] * IMAGE_SCALE, joint[1] * IMAGE_SCALE);
       j.state   = joint[2];
+
+      j.pos.x = Math.min(Math.max(j.pos.x, 0), width);
+      j.pos.y = Math.min(Math.max(j.pos.y, 0), height);
     }
   }
 }

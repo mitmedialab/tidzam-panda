@@ -12,6 +12,9 @@ class Joint {
     this.hover        = false;
 
     this.state        = JOINT_STATES['LABELED_VISIBLE'];
+
+    this.pos.x = Math.min(Math.max(this.pos.x, 0), width);
+    this.pos.y = Math.min(Math.max(this.pos.y, 0), height);
   }
 
   copy() {
@@ -71,8 +74,8 @@ class Joint {
   }
 
   move(mouse) {
-    this.pos.x += mouse.x;
-    this.pos.y += mouse.y;
+    this.pos.x = Math.min(Math.max(this.pos.x + mouse.x, 0), width);
+    this.pos.y = Math.min(Math.max(this.pos.y + mouse.y, 0), height);
 
     this.skeleton.pos = this.skeleton.getBarycenter();
     FRAMES[CURRENT_FRAME].changed = true;
