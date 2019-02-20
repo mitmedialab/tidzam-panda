@@ -72,17 +72,11 @@ def clean_all(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR, OUT_FILE):
 def build_images(DATA_DIR, IMAGE_DIR, ANNOTATION_DIR):
     print("\nBuild Images\n============\n")
     db = mongo_connect()
-<<<<<<< HEAD
     pbar = tqdm(db.frameCanvas.find({}).sort([("video_id", 1),("frame_id", 1)]))
     for v in pbar:
-        # Get video info
-        video = db.videos.find_one({"_id":ObjectId(v["video_id"])})
-=======
-    for v in db.frameCanvas.find({}).sort([("video_id", 1),("frame_id", 1)]):
         if len(v["skeletons"]) > 0 :
             # Get video info
             video = db.videos.find_one({"_id":ObjectId(v["video_id"])})
->>>>>>> 3c8f565c5b58f9ad33509f09f01a1741cbf1426e
 
             # Extract the frame
             video_cap   = cv2.VideoCapture(DATA_DIR + "/videos/" +video["path"])
@@ -96,14 +90,11 @@ def build_images(DATA_DIR, IMAGE_DIR, ANNOTATION_DIR):
             mask = np.zeros(img.shape, dtype = "uint8")
             for i, sk in enumerate(v["skeletons"]):
                 cv2.rectangle(mask, (int(sk["bbox"][0]), int(sk["bbox"][1])), (int(sk["bbox"][0]+sk["bbox"][2]), int(sk["bbox"][1]+sk["bbox"][3])), (255, 255, 255), -1)
-
-<<<<<<< HEAD
-            pbar.set_description('Built Images: %s' % filename)
-=======
+            
             filename = ANNOTATION_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"]) +'.jpg'
             cv2.imwrite(filename, mask)
-            print(filename)
->>>>>>> 3c8f565c5b58f9ad33509f09f01a1741cbf1426e
+
+            pbar.set_description('Built Images: %s' % filename)
 
 
 def build_coco_dataset_2017(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR):
