@@ -73,7 +73,7 @@ def build_images(DATA_DIR, IMAGE_DIR, ANNOTATION_DIR):
     print("\nBuild Images\n============\n")
     db = mongo_connect()
     frame_canvas = db.frameCanvas.find({}).sort([("video_id", 1),("frame_id", 1)])
-    pbar = tqdm(frame_canvas, total=frame_canvas.size())
+    pbar = tqdm(frame_canvas, total=db.frameCanvas.find({}).count())
     for v in pbar:
         if len(v["skeletons"]) > 0 :
             # Get video info
