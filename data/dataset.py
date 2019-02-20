@@ -83,18 +83,18 @@ def build_images(DATA_DIR, IMAGE_DIR, ANNOTATION_DIR):
             video_cap.set(cv2.CAP_PROP_POS_FRAMES, v["frame_id"])
             _, img = video_cap.read()
             filename = IMAGE_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"])+'.jpg'
-            print(filename)
+            pb.set_description('Build Image: %s' % filename)
             cv2.imwrite(filename, img)
 
             # Build the skeleton mask
             mask = np.zeros(img.shape, dtype = "uint8")
             for i, sk in enumerate(v["skeletons"]):
                 cv2.rectangle(mask, (int(sk["bbox"][0]), int(sk["bbox"][1])), (int(sk["bbox"][0]+sk["bbox"][2]), int(sk["bbox"][1]+sk["bbox"][3])), (255, 255, 255), -1)
-            
+
             filename = ANNOTATION_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"]) +'.jpg'
             cv2.imwrite(filename, mask)
 
-            pbar.set_description('Built Images: %s' % filename)
+            pbar.set_description('Build Image: %s' % filename)
 
 
 def build_coco_dataset_2017(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR):
