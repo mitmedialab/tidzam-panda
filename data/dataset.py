@@ -5,10 +5,12 @@ import glob
 import os
 import shutil
 import numpy as np
+
 from PIL import Image
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from pycococreatortools import pycococreatortools
+from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description='Tidzam Panda COCO Dataset Manager')
 
@@ -58,7 +60,9 @@ def clean_all(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR, OUT_FILE):
     a = input("Do you want to erase everything ? [N/y]")
     if (a == 'y' or a == 'Y'):
         filelist = glob.glob(IMAGE_DIR + "/*") + glob.glob(ANNOTATION_DIR + "/*")
-        for f in filelist:
+        pbar = tqdm(filelist)
+        for f in pbar:
+            pbar.set_description('Removing %s' % f)
             os.remove(f)
         try:
             os.remove(OUT_FILE)
@@ -68,7 +72,8 @@ def clean_all(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR, OUT_FILE):
 def build_images(DATA_DIR, IMAGE_DIR, ANNOTATION_DIR):
     print("\nBuild Images\n============\n")
     db = mongo_connect()
-    for v in db.frameCanvas.find({}).sort([("video_id", 1),("frame_id", 1)]):
+    pbar = tqdm(db.frameCanvas.find({}).sort([("video_id", 1),("frame_id", 1)]))
+    for v in pbar:
         # Get video info
         video = db.videos.find_one({"_id":ObjectId(v["video_id"])})
 
@@ -86,7 +91,7 @@ def build_images(DATA_DIR, IMAGE_DIR, ANNOTATION_DIR):
             filename = ANNOTATION_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"])+  '-' + str(i) +'.jpg'
             cv2.imwrite(filename, mask)
 
-            print(filename)
+            pbar.set_description('Built Images: %s' % filename)
 
 
 def build_coco_dataset(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR):
@@ -102,8 +107,9 @@ def build_coco_dataset(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR):
     with open(COCO_TEMPLATE_FILE) as f:
         coco_output = json.load(f)
 
-    for image_filename in glob.glob(IMAGE_DIR + "/*"):
-        print(image_filename)
+    pbar = tqdm(glob.glob(IMAGE_DIR + "/*"))
+    for image_filename in pbar:
+        pbar.set_description('Build coco dataset: %s' % image_filename)
         if os.path.isdir(image_filename):
             continue
 
