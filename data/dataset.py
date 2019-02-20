@@ -83,7 +83,7 @@ def build_images(DATA_DIR, IMAGE_DIR, ANNOTATION_DIR):
             video_cap.set(cv2.CAP_PROP_POS_FRAMES, v["frame_id"])
             _, img = video_cap.read()
             filename = IMAGE_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"])+'.jpg'
-            pb.set_description('Build Image: %s' % filename)
+            pbar.set_description('Build Image: %s' % filename)
             cv2.imwrite(filename, img)
 
             # Build the skeleton mask
