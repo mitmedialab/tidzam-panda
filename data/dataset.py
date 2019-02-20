@@ -72,7 +72,8 @@ def clean_all(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR, OUT_FILE):
 def build_images(DATA_DIR, IMAGE_DIR, ANNOTATION_DIR):
     print("\nBuild Images\n============\n")
     db = mongo_connect()
-    pbar = tqdm(db.frameCanvas.find({}).sort([("video_id", 1),("frame_id", 1)]))
+    frame_canvas = db.frameCanvas.find({}).sort([("video_id", 1),("frame_id", 1)])
+    pbar = tqdm(frame_canvas, total=len(frame_canvas))
     for v in pbar:
         if len(v["skeletons"]) > 0 :
             # Get video info
