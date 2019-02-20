@@ -69,27 +69,29 @@ def build_images(DATA_DIR, IMAGE_DIR, ANNOTATION_DIR):
     print("\nBuild Images\n============\n")
     db = mongo_connect()
     for v in db.frameCanvas.find({}).sort([("video_id", 1),("frame_id", 1)]):
-        # Get video info
-        video = db.videos.find_one({"_id":ObjectId(v["video_id"])})
+        if len(v["skeletons"]) > 0 :
+            # Get video info
+            video = db.videos.find_one({"_id":ObjectId(v["video_id"])})
 
-        for i, sk in enumerate(v["skeletons"]):
             # Extract the frame
             video_cap   = cv2.VideoCapture(DATA_DIR + "/videos/" +video["path"])
             video_cap.set(cv2.CAP_PROP_POS_FRAMES, v["frame_id"])
             _, img = video_cap.read()
-
-            filename = IMAGE_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"])+ '-' + str(i) +'.jpg'
+            filename = IMAGE_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"])+'.jpg'
+            print(filename)
             cv2.imwrite(filename, img)
 
+            # Build the skeleton mask
             mask = np.zeros(img.shape, dtype = "uint8")
-            cv2.rectangle(mask, (int(sk["bbox"][0]), int(sk["bbox"][1])), (int(sk["bbox"][0]+sk["bbox"][2]), int(sk["bbox"][1]+sk["bbox"][3])), (255, 255, 255), -1)
-            filename = ANNOTATION_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"])+  '-' + str(i) +'.jpg'
-            cv2.imwrite(filename, mask)
+            for i, sk in enumerate(v["skeletons"]):
+                cv2.rectangle(mask, (int(sk["bbox"][0]), int(sk["bbox"][1])), (int(sk["bbox"][0]+sk["bbox"][2]), int(sk["bbox"][1]+sk["bbox"][3])), (255, 255, 255), -1)
 
+            filename = ANNOTATION_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"]) +'.jpg'
+            cv2.imwrite(filename, mask)
             print(filename)
 
 
-def build_coco_dataset(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR):
+def build_coco_dataset_2017(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR):
     db = mongo_connect()
 
     print("\n================")
@@ -115,28 +117,30 @@ def build_coco_dataset(COCO_TEMPLATE_FILE, IMAGE_DIR, ANNOTATION_DIR):
         coco_output["images"].append(image_info)
 
         # Generations of the annotation
-        ann = db.frameCanvas.find_one({"video_id":image_id.split("-")[0], "frame_id": int(image_id.split("-")[1]) })
+        frameCanvas = db.frameCanvas.find({"video_id":image_id.split("-")[0], "frame_id": int(image_id.split("-")[1]) })
 
-        for sk in ann["skeletons"]:
-            annotation = {
-            	"segmentation": [],
-            	"area": 0,
-            	"iscrowd": 0,
-            	"image_id": image_id,
-            	"bbox": [],
-            	"category_id": 1,
-            	"keypoints": [],
-            	"num_keypoints": 0
-            }
+        for fc in frameCanvas:
+            for sk in fc["skeletons"]:
+                annotation = {
+                    "isValidation": 0.,
+                	"segmentation": [],
+                	"area": 0,
+                	"iscrowd": 0 if len(fc["skeletons"]) < 2 else 1,
+                	"image_id": image_id,
+                	"bbox": [],
+                	"category_id": 1,
+                	"keypoints": [],
+                	"num_keypoints": 0
+                }
 
-            for e in coco_output["edges"]:
-                annotation["keypoints"].append(sk["keypoints"][e][0])  # x
-                annotation["keypoints"].append(sk["keypoints"][e][1])  # y
-                annotation["keypoints"].append(sk["keypoints"][e][2]) # value
-                if sk["keypoints"][e][0] != 0 or sk["keypoints"][e][1] != 0:
-                    annotation["num_keypoints"] = annotation["num_keypoints"] + 1
-            annotation["bbox"] = sk["bbox"]
-            coco_output["annotations"].append(annotation)
+                for e in coco_output["edges"]:
+                    annotation["keypoints"].append(sk["keypoints"][e][0])  # x
+                    annotation["keypoints"].append(sk["keypoints"][e][1])  # y
+                    annotation["keypoints"].append(sk["keypoints"][e][2]) # value
+                    if sk["keypoints"][e][0] != 0 or sk["keypoints"][e][1] != 0:
+                        annotation["num_keypoints"] = annotation["num_keypoints"] + 1
+                annotation["bbox"] = sk["bbox"]
+                coco_output["annotations"].append(annotation)
 
     print("\nDataset generated with success.\n")
     return coco_output
@@ -150,4 +154,4 @@ if __name__ == '__main__':
 
     if(args.build):
         with open(args.build_out, 'w') as outfile:
-            json.dump(build_coco_dataset(args.coco_template, args.coco_images_dir, args.coco_annotations_dir), outfile)
+            json.dump(build_coco_dataset_2017(args.coco_template, args.coco_images_dir, args.coco_annotations_dir), outfile)
