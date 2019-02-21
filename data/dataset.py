@@ -66,7 +66,8 @@ def build_images(DATA_DIR, TRAIN_IMAGE_DIR, VAL_IMAGE_DIR, VAL_SPLIT_FACTOR):
         int(VAL_SPLIT_FACTOR * frame_count),
         replace=False
     )
-    
+
+    image_id = 0
     for i, v in enumerate(pbar):
         if len(v["skeletons"]) > 0 :
             IMAGE_DIR = VAL_IMAGE_DIR if i in val_indexes else TRAIN_IMAGE_DIR
@@ -79,8 +80,8 @@ def build_images(DATA_DIR, TRAIN_IMAGE_DIR, VAL_IMAGE_DIR, VAL_SPLIT_FACTOR):
             video_cap.set(cv2.CAP_PROP_POS_FRAMES, v["frame_id"])
 
             _, img   = video_cap.read()
-            filename = IMAGE_DIR + "/" + str(v["video_id"]) + '-' + str(v["frame_id"]) + '.jpg'
-
+            filename = IMAGE_DIR + "/" + str(image_id) + "-" + str(v["video_id"]) + '-' + str(v["frame_id"]) + '.jpg'
+            image_id += 1
             cv2.imwrite(filename, img)
             pbar.set_description('Build Image: %s' % filename)
 
@@ -92,6 +93,7 @@ def build_coco_dataset_2017(COCO_TEMPLATE_FILE, TRAIN_IMAGE_DIR, VAL_IMAGE_DIR, 
             coco_output = json.load(f)
 
         pbar = tqdm(glob.glob(IMAGE_DIR + "/*"))
+        id = 0
         for image_filename in pbar:
             pbar.set_description('Build coco dataset: %s' % image_filename)
 
@@ -99,7 +101,8 @@ def build_coco_dataset_2017(COCO_TEMPLATE_FILE, TRAIN_IMAGE_DIR, VAL_IMAGE_DIR, 
                 continue
 
             # Build images
-            image_id   = os.path.basename(image_filename).split(".")[0]
+            filename   = os.path.basename(image_filename).split(".")[0]
+            image_id   = int(filename.split("-")[0])
             image      = Image.open(image_filename)
             image_info = pycococreatortools.create_image_info(
                 image_id,
@@ -111,32 +114,45 @@ def build_coco_dataset_2017(COCO_TEMPLATE_FILE, TRAIN_IMAGE_DIR, VAL_IMAGE_DIR, 
 
             # Generations of the annotation
             frameCanvas = db.frameCanvas.find({
-                "video_id": image_id.split("-")[0],
-                "frame_id": int(image_id.split("-")[1])
+                "video_id": filename.split("-")[1],
+                "frame_id": int(filename.split("-")[2])
             })
+
 
             for fc in frameCanvas:
                 for sk in fc["skeletons"]:
                     annotation = {
                     	"segmentation" : [],
                     	"area"         : 0,
-                    	"iscrowd"      : 0 if len(fc["skeletons"]) < 2 else 1,
+                    	"iscrowd"      : 0,
                     	"image_id"     : image_id,
                     	"bbox"         : [],
                     	"category_id"  : 1,
                     	"keypoints"    : [],
-                    	"num_keypoints": 0
+                    	"num_keypoints": 0,
+                        "id"           : id
                     }
+                    id += 1
 
-                    for e in coco_output["edges"]:
-                        annotation["keypoints"].append(sk["keypoints"][e][0]) # x
-                        annotation["keypoints"].append(sk["keypoints"][e][1]) # y
-                        annotation["keypoints"].append(sk["keypoints"][e][2]) # value
+                    for e in sorted(coco_output["edges"].items(), key=lambda x: x[1]):
+                        e = e[0]
+                        annotation["keypoints"].append(int(sk["keypoints"][e][0])) # x
+                        annotation["keypoints"].append(int(sk["keypoints"][e][1])) # y
+                        annotation["keypoints"].append(int(sk["keypoints"][e][2])) # value
 
                         if sk["keypoints"][e][0] != 0 or sk["keypoints"][e][1] != 0:
                             annotation["num_keypoints"] = annotation["num_keypoints"] + 1
 
-                    annotation["bbox"] = sk["bbox"]
+                    annotation["bbox"] = list(map(lambda x: int(x),sk["bbox"]  ))
+                    annotation["segmentation"] = [[
+                            sk["bbox"][0],
+                            sk["bbox"][1],
+                            sk["bbox"][0] + sk["bbox"][2],
+                            sk["bbox"][1] + sk["bbox"][3],
+                            sk["bbox"][0],
+                            sk["bbox"][1]
+                            ]]
+                    annotation["area"] = annotation["bbox"][2] * annotation["bbox"][3]
                     coco_output["annotations"].append(annotation)
 
         with open(ANNOTATION_FILE, 'w') as fp:
