@@ -175,13 +175,6 @@ def load_skeleton(next_frame):
 def index():
     return render_template('index.html')
 
-@app.route('/video/<string:video_id>/')
-def skeleton(video_id):
-    return render_template(
-        'video.html',
-        url=video_id
-    )
-
 ###
 @app.route('/video/', methods=['GET'])
 def get_videos():
@@ -190,6 +183,27 @@ def get_videos():
         video["_id"] = str(video["_id"])
         res.append(video)
     return jsonify(res)
+
+
+@app.route('/video/<string:video_id>/', methods=['GET'])
+def skeleton(video_id):
+    return render_template(
+        'video.html',
+        url=video_id
+    )
+
+
+@app.route('/video/<string:video_id>/*', methods=['GET'])
+def get_frame_all(video_id):
+    res = []
+    req = mongo.db.frameCanvas.find({'video_id': video_id})
+    for r in req:
+        frame           = prepare_frame(video_id, r["frame_id"])
+        frame           = load_skeleton(frame)
+        frame['img']    = img_to_b64(frame['img'])
+        res.append(frame)
+    return jsonify(res)
+
 
 @app.route('/video/<string:video_id>/status', methods=['GET'])
 def get_video_status(video_id):
