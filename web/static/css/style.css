@@ -60,7 +60,7 @@
   position: relative;
   display: block;
 
-  margin: 45px auto;
+  margin: 25px auto;
   padding: 0px;
 
   width: auto;
@@ -117,6 +117,19 @@
   overflow: hidden;
 }
 
+#card-controls-post {
+  position: relative;
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  margin: auto;
+  padding: 0px;
+
+  width: 100%;
+  height: auto;
+}
+
 button {
   border: none;
   padding: 10px 15px;
@@ -146,15 +159,15 @@ button:active {
   cursor: default;
 }
 
-#FIRST, #PREV, #NEXT, #BACK {
+#FIRST, #PREV, #NEXT, #BACK, #LAST, #NEXT_SUB, #PREV_SUB {
   background-color: var(--accent);
   transition: 0.2s;
 }
-#FIRST:hover, #PREV:hover, #NEXT:hover, #BACK:hover {
+#FIRST:hover, #PREV:hover, #NEXT:hover, #BACK:hover, #LAST:hover, #NEXT_SUB:hover, #PREV_SUB:hover {
   background-color: var(--accent-dark);
 }
-#FIRST:disabled,  #PREV:disabled,  #NEXT:disabled,  #BACK:disabled,
-#FIRST[disabled], #PREV[disabled], #NEXT[disabled], #BACK[disabled] {
+#FIRST:disabled,  #PREV:disabled,  #NEXT:disabled,  #BACK:disabled,  #LAST:disabled,  #NEXT_SUB:disabled,  #PREV_SUB:disabled,
+#FIRST[disabled], #PREV[disabled], #NEXT[disabled], #BACK[disabled], #LAST[disabled], #NEXT_SUB[disabled], #PREV_SUB[disabled] {
   background-color: var(--accent-light);
   cursor: default;
 }
@@ -390,6 +403,7 @@ button:active {
 
 #BACK, #LOAD {
   margin: 10px auto;
+  width: 55px;
 }
 
 #little-card {

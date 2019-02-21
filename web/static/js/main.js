@@ -105,6 +105,66 @@ function firstFrame() {
   if(STATUS == 0 && FRAMES.length > 0) updateStatus(STATUS + 1);
 }
 
+function lastFrame() {
+  if(CURRENT_FRAME == FRAMES.length - 1) return;
+
+  let last_frame = CURRENT_FRAME;
+  for(let i = CURRENT_FRAME + 1; i < FRAMES.length; i++)
+    if(FRAMES[i].img != null) last_frame = i;
+
+  if(last_frame == CURRENT_FRAME) return;
+
+  if(FRAMES.length > 0) postFrame(FRAMES[CURRENT_FRAME], CURRENT_FRAME);
+  CURRENT_FRAME = last_frame;
+  updateButtons();
+
+  if(STATUS == 0 && FRAMES.length > 0) updateStatus(STATUS + 1);
+}
+
+function nextSeen() {
+  if(CURRENT_FRAME == FRAMES.length - 1) return;
+
+  let nf2s = nextFrameToSee();
+  if(nf2s.stop == true) return;
+
+  if(FRAMES.length > 0) postFrame(FRAMES[CURRENT_FRAME], CURRENT_FRAME);
+  CURRENT_FRAME = nf2s.next;
+  updateButtons();
+
+  if(STATUS == 0 && FRAMES.length > 0) updateStatus(STATUS + 1);
+}
+
+function prevSeen() {
+  if(CURRENT_FRAME <= 0) return;
+
+  let nf2s = prevFrameToSee();
+  if(nf2s.stop == true) return;
+
+  if(FRAMES.length > 0) postFrame(FRAMES[CURRENT_FRAME], CURRENT_FRAME);
+  CURRENT_FRAME = nf2s.prev;
+  updateButtons();
+
+  if(STATUS == 0 && FRAMES.length > 0) updateStatus(STATUS + 1);
+}
+
+function nextFrameToSee() {
+  let c = CURRENT_FRAME + 1;
+
+  for(let i = c; i < FRAMES.length; i++)
+    if(FRAMES[i].img != null) return { 'stop': false, 'next': i };
+
+  return { 'stop': true };
+}
+
+function prevFrameToSee() {
+  let c = CURRENT_FRAME - 1;
+
+  for(let i = c; i >= 0; i--)
+    if(FRAMES[i].img != null) return { 'stop': false, 'prev': i };
+
+  return { 'stop': true };
+}
+
 function playVideo() {
   PREVIEW = true;
   updateButtons();
@@ -163,10 +223,17 @@ function incrementAction(skeleton) {
 }
 
 function updateButtons() {
-  $( '#NEXT' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || CURRENT_FRAME == TOTAL_FRAME - 1 || PREVIEW));
-  $( '#PREV' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || CURRENT_FRAME <= 0 || PREVIEW));
+  let is_prev_to_see = FRAMES.slice(0, CURRENT_FRAME).filter(e => e.img != null).length > 0;
+  let is_next_to_see = FRAMES.slice(CURRENT_FRAME + 1).filter(e => e.img != null).length > 0;
+
+  $( '#NEXT' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || CURRENT_FRAME == TOTAL_FRAME - 1 || PREVIEW || !is_next_to_see));
+  $( '#PREV' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || CURRENT_FRAME <= 0 || PREVIEW || !is_prev_to_see));
+
+  $( '#NEXT_SUB' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || CURRENT_FRAME == TOTAL_FRAME - 1 || PREVIEW));
+  $( '#PREV_SUB' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || CURRENT_FRAME <= 0 || PREVIEW));
 
   $( '#FIRST' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || CURRENT_FRAME <= 0 || PREVIEW));
+  $( '#LAST' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || CURRENT_FRAME == TOTAL_FRAME - 1 || PREVIEW || !is_next_to_see));
 
   $( '#ADD' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || PREVIEW));
 
@@ -174,7 +241,10 @@ function updateButtons() {
   $( '#LOAD' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || PREVIEW));
 
   $( '#SUBMIT' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || FRAMES.length <= 0 || PREVIEW || STATUS != 1));
-  $( '#PREVIEW' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || FRAMES.length <= 0 || CURRENT_FRAME >= TOTAL_FRAME - 1 || PREVIEW));
+
+  $( '#PREVIEW' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || FRAMES.length <= 0 || CURRENT_FRAME >= TOTAL_FRAME - 1 || !is_next_to_see));
+  $( '#PREVIEW' ).html(PREVIEW ? '<i class="fas fa-pause"></i>': '<i class="fas fa-play"></i>');
+  $( '#PREVIEW' ).attr('onclick', PREVIEW ? 'javascript: stopVideo()': 'javascript: playVideo()');
 
   $( '#FPC' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || PREVIEW));
 }

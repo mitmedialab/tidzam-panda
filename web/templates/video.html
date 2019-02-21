@@ -48,8 +48,16 @@
 
         <div id='card-controls'>
           <button id="FIRST" onclick="firstFrame()" ><i class="fas fa-fast-backward"></i></button>
-          <button id="PREV"  onclick="prev()"  ><i class="fas fa-step-backward"></i></button>
+          <button id="PREV"  onclick="prevSeen()"  ><i class="fas fa-step-backward"></i></button>
           <button id="PREVIEW" onclick="playVideo()"><i class="fas fa-play"></i></button>
+          <button id="NEXT"  onclick="nextSeen()"  ><i class="fas fa-step-forward"></i></button>
+          <button id="LAST"  onclick="lastFrame()"  ><i class="fas fa-fast-forward"></i></button>
+        </div>
+      </div>
+
+      <div id="card">
+        <div id='card-controls-post'>
+          <button id="PREV_SUB"  onclick="prev()"><i class="fas fa-chevron-left"></i></button>
           <select id="FPC">
             <option value="1" selected>1 FPC</option>
             <option value="5"        >5 FPC</option>
@@ -58,7 +66,7 @@
             <option value="96"        >96 FPC</option>
             <option value="120"       >120 FPC</option>
           </select>
-          <button id="NEXT"  onclick="next()"  ><i class="fas fa-step-forward"></i></button>
+          <button id="NEXT_SUB"  onclick="next()"><i class="fas fa-chevron-right"></i></button>
         </div>
       </div>
 
