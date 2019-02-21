@@ -1,14 +1,16 @@
-let SELECTOR      = new Selector();
+let SELECTOR                   = new Selector();
 
-let FRAMES        = [];
-let CURRENT_FRAME = -1;
-let TOTAL_FRAME   = 0;
-let PREVIEW       = false;
-let STATUS        = 0;
+let FRAMES                     = [];
+let CURRENT_FRAME              = -1;
+let TOTAL_FRAME                = 0;
+let PREVIEW                    = false;
+let STATUS                     = 0;
 
-let IMAGE_W       = 1080;
-let IMAGE_H       = null;
-let IMAGE_SCALE   = null;
+let IMAGE_W                    = 1080;
+let IMAGE_H                    = null;
+let IMAGE_SCALE                = null;
+
+let IS_LOADING_COMPUTED_FRAMES = false;
 
 function setFrame() {
   updateButtons();
@@ -75,7 +77,7 @@ function nextFrame(do_post=true, fake_frame=false) {
   if(!fake_frame) setFrame();
   else {
     let frame = FRAMES[CURRENT_FRAME];
-    if(!frame) FRAMES.push(new Frame(FRAMES[CURRENT_FRAME - 1].img));
+    if(!frame) FRAMES.push(new Frame(null));
     updateButtons();
   }
 }
@@ -161,16 +163,18 @@ function incrementAction(skeleton) {
 }
 
 function updateButtons() {
-  $( '#NEXT' ).prop('disabled', (CURRENT_FRAME == TOTAL_FRAME - 1 || PREVIEW));
-  $( '#PREV' ).prop('disabled', (CURRENT_FRAME <= 0 || PREVIEW));
+  $( '#NEXT' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || CURRENT_FRAME == TOTAL_FRAME - 1 || PREVIEW));
+  $( '#PREV' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || CURRENT_FRAME <= 0 || PREVIEW));
 
-  $( '#FIRST' ).prop('disabled', (CURRENT_FRAME <= 0 || PREVIEW));
+  $( '#FIRST' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || CURRENT_FRAME <= 0 || PREVIEW));
 
-  $( '#ADD' ).prop('disabled', (PREVIEW));
+  $( '#ADD' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || PREVIEW));
 
-  $( '#BACK' ).prop('disabled', (PREVIEW));
-  $( '#SUBMIT' ).prop('disabled', (FRAMES.length <= 0 || PREVIEW || STATUS != 1));
-  $( '#PREVIEW' ).prop('disabled', (FRAMES.length <= 0 || CURRENT_FRAME >= TOTAL_FRAME - 1 || PREVIEW));
+  $( '#BACK' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || PREVIEW));
+  $( '#LOAD' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || PREVIEW));
 
-  $( '#FPC' ).prop('disabled', (PREVIEW));
+  $( '#SUBMIT' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || FRAMES.length <= 0 || PREVIEW || STATUS != 1));
+  $( '#PREVIEW' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || FRAMES.length <= 0 || CURRENT_FRAME >= TOTAL_FRAME - 1 || PREVIEW));
+
+  $( '#FPC' ).prop('disabled', (IS_LOADING_COMPUTED_FRAMES || PREVIEW));
 }

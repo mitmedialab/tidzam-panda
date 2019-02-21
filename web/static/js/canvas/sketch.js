@@ -54,10 +54,26 @@ function drawFrameInfo() {
   ), 10, 10 + TEXT_SIZE + 10);
 }
 
+function nextFrameToSee() {
+  let c = CURRENT_FRAME + 1;
+
+  for(let i = c; i < FRAMES.length; i++)
+    if(FRAMES[i].img != null) return { 'stop': false, 'next': i };
+
+  return { 'stop': true };
+}
+
 function draw() {
+  if(CURRENT_FRAME == -1) {
+    background(0);
+    return;
+  }
+
   if(PREVIEW) {
-    if(CURRENT_FRAME < FRAMES.length - 1) CURRENT_FRAME++;
-    else stopVideo();
+    let next_frame = nextFrameToSee();
+
+    if(next_frame.stop == true) stopVideo();
+    else CURRENT_FRAME = next_frame.next;
   }
 
   let mouse   = new Vector2D(mouseX, mouseY);

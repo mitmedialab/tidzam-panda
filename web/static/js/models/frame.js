@@ -30,7 +30,7 @@ class Frame {
   }
 
   draw() {
-    image(this.img, 0, 0, IMAGE_W, IMAGE_H);
+    if (this.img != null) image(this.img, 0, 0, IMAGE_W, IMAGE_H);
     for(let skeleton of this.skeletons) skeleton.draw();
     for(let skeleton of this.skeletons) skeleton.drawLabel();
   }

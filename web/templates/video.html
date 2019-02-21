@@ -37,7 +37,10 @@
     <script>
       let VIDEO_URL  = '{{ url|safe }}';
     </script>
-    <button id="BACK" onclick="backToList()"><i class="fas fa-arrow-left"></i></button>
+    <div id="outside-controls">
+      <button id="BACK" onclick="backToList()"><i class="fas fa-arrow-left"></i></button>
+      <button id="LOAD" onclick="loadComputedFrames()"><i class="fas fa-spinner"></i></button>
+    </div>
 
     <div id='cards'>
       <div id="card">

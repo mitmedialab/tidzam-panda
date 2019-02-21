@@ -135,6 +135,7 @@ button:active {
 
 #SUBMIT {
   background-color: var(--primary);
+  transition: 0.2s;
 }
 #SUBMIT:hover {
   background-color: var(--primary-dark);
@@ -147,6 +148,7 @@ button:active {
 
 #FIRST, #PREV, #NEXT, #BACK {
   background-color: var(--accent);
+  transition: 0.2s;
 }
 #FIRST:hover, #PREV:hover, #NEXT:hover, #BACK:hover {
   background-color: var(--accent-dark);
@@ -157,16 +159,32 @@ button:active {
   cursor: default;
 }
 
-#PREVIEW, #FPC, #status-button {
+#PREVIEW, #FPC, #status-button, #LOAD {
   background-color: var(--blue);
+  transition: 0.2s;
 }
-#PREVIEW:hover, #FPC:hover, #status-button:hover {
+#PREVIEW:hover, #FPC:hover, #status-button:hover, #LOAD:hover {
   background-color: var(--blue-dark);
 }
 #PREVIEW:disabled,  #FPC:disabled,  #status-button:disabled,
 #PREVIEW[disabled], #FPC[disabled], #status-button[disabled] {
   background-color: var(--blue-light);
   cursor: default;
+}
+
+#LOAD:disabled,
+#LOAD[disabled] {
+  background-color: var(--blue-dark);
+  cursor: default;
+}
+
+#LOAD:disabled > i,
+#LOAD[disabled] > i {
+  animation: spin 3s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 #card-list #card-list-row:nth-child(odd) {
@@ -362,9 +380,16 @@ button:active {
   color: var(--dark-grey);
 }
 
-#BACK {
+#outside-controls {
   position: absolute;
   left: 0px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+#BACK, #LOAD {
+  margin: 10px auto;
 }
 
 #little-card {

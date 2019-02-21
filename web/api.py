@@ -90,22 +90,17 @@ def load_skeleton(next_frame):
         'frame_id': next_frame['frame_id']
     })
 
-    prev_frame_canvas = mongo.db.frameCanvas.find({
-        'video_id': next_frame['video_id'] #,
-        #'frame_id': (next_frame['frame_id'] - 1)
-    }).sort("frame_id",-1)
+    prev_frame_canvases = mongo.db.frameCanvas.find({
+        'video_id': next_frame['video_id']
+    }).sort('frame_id', -1)
 
     # Load the first available previous frame which has a skeleton
-    found = False
-    for c in prev_frame_canvas:
-        if(c["frame_id"] == next_frame['frame_id'] ):
-            found = True
-        if found and len(c["skeletons"]) > 0:
-            break
-    try:
-        prev_frame_canvas = c
-    except:
-        prev_frame_canvas = None
+    prev_frame_canvas = None
+    for c in prev_frame_canvases:
+        if(c['frame_id'] == next_frame['frame_id'] ):
+            if len(c['skeletons']) > 0:
+                prev_frame_canvas = c
+                break
 
     # If their is already an entry for this frame
     if frame_canvas is not None:
@@ -132,8 +127,8 @@ def load_skeleton(next_frame):
 
             if frame_canvas:
                 skeleton_already_present = False
-                for sk in frame_canvas["skeletons"]:
-                    if skeleton["id"] == sk["id"]:
+                for sk in frame_canvas['skeletons']:
+                    if skeleton['id'] == sk['id']:
                         skeleton_already_present = True
                 if skeleton_already_present:
                     continue
@@ -175,15 +170,13 @@ def load_skeleton(next_frame):
 def index():
     return render_template('index.html')
 
-###
 @app.route('/video/', methods=['GET'])
 def get_videos():
     res = []
     for video in mongo.db.videos.find():
-        video["_id"] = str(video["_id"])
+        video['_id'] = str(video['_id'])
         res.append(video)
     return jsonify(res)
-
 
 @app.route('/video/<string:video_id>/', methods=['GET'])
 def skeleton(video_id):
@@ -192,18 +185,16 @@ def skeleton(video_id):
         url=video_id
     )
 
-
 @app.route('/video/<string:video_id>/*', methods=['GET'])
-def get_frame_all(video_id):
+def get_all_frames(video_id):
     res = []
-    req = mongo.db.frameCanvas.find({'video_id': video_id})
+    req = mongo.db.frameCanvas.find({ 'video_id': video_id })
     for r in req:
-        frame           = prepare_frame(video_id, r["frame_id"])
+        frame           = prepare_frame(video_id, r['frame_id'])
         frame           = load_skeleton(frame)
         frame['img']    = img_to_b64(frame['img'])
         res.append(frame)
     return jsonify(res)
-
 
 @app.route('/video/<string:video_id>/status', methods=['GET'])
 def get_video_status(video_id):
@@ -214,13 +205,12 @@ def get_video_status(video_id):
 @app.route('/video/<string:video_id>/status', methods=['POST'])
 def set_video_status(video_id):
     res = mongo.db.videos.update_one(
-        {'_id' : ObjectId(video_id)},
-        {'$set': {
+        { '_id' : ObjectId(video_id) },
+        { '$set': {
             'status': int(json.loads(str(request.data, 'utf-8'))['status'])
         }}
     )
     return jsonify({})
-
 
 @app.route('/video/<string:video_id>/<int:frame_id>', methods=['GET'])
 def get_frame(video_id, frame_id):
@@ -236,7 +226,7 @@ def post_frame_canvas(video_id, frame_id):
     f['frame_id'] = frame_id
 
     if ('skeletons' in f):
-        mongo.db.frameCanvas.delete_one({'video_id' : video_id, 'frame_id': frame_id})
+        mongo.db.frameCanvas.delete_one({ 'video_id' : video_id, 'frame_id': frame_id })
         id = mongo.db.frameCanvas.insert(f)
 
     return jsonify({})
