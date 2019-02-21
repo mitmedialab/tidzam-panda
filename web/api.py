@@ -98,9 +98,10 @@ def load_skeleton(next_frame):
     prev_frame_canvas = None
     for c in prev_frame_canvases:
         if(c['frame_id'] == next_frame['frame_id'] ):
-            if len(c['skeletons']) > 0:
-                prev_frame_canvas = c
                 break
+                
+        if len(c['skeletons']) > 0:
+            prev_frame_canvas = c
 
     # If their is already an entry for this frame
     if frame_canvas is not None:
@@ -130,6 +131,7 @@ def load_skeleton(next_frame):
                 for sk in frame_canvas['skeletons']:
                     if skeleton['id'] == sk['id']:
                         skeleton_already_present = True
+
                 if skeleton_already_present:
                     continue
 
