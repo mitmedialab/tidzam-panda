@@ -91,17 +91,16 @@ def load_skeleton(next_frame):
     })
 
     prev_frame_canvases = mongo.db.frameCanvas.find({
-        'video_id': next_frame['video_id']
+        'video_id': next_frame['video_id'],
+        'frame_id': { '$lt': next_frame['frame_id'] }
     }).sort('frame_id', -1)
 
     # Load the first available previous frame which has a skeleton
     prev_frame_canvas = None
     for c in prev_frame_canvases:
-        if(c['frame_id'] == next_frame['frame_id'] ):
-                break
-                
         if len(c['skeletons']) > 0:
             prev_frame_canvas = c
+            break
 
     # If their is already an entry for this frame
     if frame_canvas is not None:
