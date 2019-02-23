@@ -188,13 +188,8 @@ def skeleton(video_id):
 
 @app.route('/video/<string:video_id>/*', methods=['GET'])
 def get_all_frames(video_id):
-    res = []
     req = mongo.db.frameCanvas.find({ 'video_id': video_id })
-    for r in req:
-        frame           = prepare_frame(video_id, r['frame_id'])
-        frame           = load_skeleton(frame)
-        frame['img']    = img_to_b64(frame['img'])
-        res.append(frame)
+    res = [r['frame_id'] for r in req]
     return jsonify(res)
 
 @app.route('/video/<string:video_id>/status', methods=['GET'])
