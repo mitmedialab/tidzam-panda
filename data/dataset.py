@@ -57,8 +57,8 @@ def build_images(DATA_DIR, TRAIN_IMAGE_DIR, VAL_IMAGE_DIR, VAL_SPLIT_FACTOR):
 
     db = mongo_connect()
 
-    frame_canvas = db.frameCanvas.find({}).sort([("video_id", 1),("frame_id", 1)])
-    frame_count  = db.frameCanvas.find({}).count()
+    frame_canvas = list(db.frameCanvas.find({}).sort([("video_id", 1),("frame_id", 1)]))
+    frame_count  = len(frame_canvas)
     pbar         = tqdm(frame_canvas, total=frame_count)
 
     val_indexes = np.random.choice(
@@ -74,6 +74,9 @@ def build_images(DATA_DIR, TRAIN_IMAGE_DIR, VAL_IMAGE_DIR, VAL_SPLIT_FACTOR):
 
             # Get video info
             video = db.videos.find_one({"_id": ObjectId(v["video_id"])})
+
+            if int(video["status"]) != 2:
+                continue
 
             # Extract the frame
             video_cap   = cv2.VideoCapture(DATA_DIR + "/videos/" + video["path"])
@@ -156,7 +159,6 @@ def build_coco_dataset_2017(COCO_TEMPLATE_FILE, TRAIN_IMAGE_DIR, VAL_IMAGE_DIR, 
                     coco_output["annotations"].append(annotation)
 
         with open(ANNOTATION_FILE, 'w') as fp:
-            print(json.dumps(coco_output, sort_keys=True, indent=4))
             json.dump(coco_output, fp, sort_keys=True, indent=4)
 
         print("\nAnnotation [%s] generated with success.\n" % ANNOTATION_FILE)
